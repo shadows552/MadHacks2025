@@ -1,2 +1,2 @@
 # MadHacks2025
-Interactive 3d repair guide generator
+3Docs — Interactive 3d repair guide
