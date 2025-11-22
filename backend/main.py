@@ -5,9 +5,12 @@ Main pipeline for processing PDF manuals with Gemini AI.
 from pathlib import Path
 from preprocessing import extract_pdf_content
 from gemini_service import process_manual_images
-from database import store_gemini_results
+from database import init_db, calculate_pdf_hash, store_gemini_results
 
 if __name__ == "__main__":
+    # Initialize database
+    init_db()
+
     # Hardcoded PDF for now - will be replaced with Flask endpoint
     pdf_filename = "test.pdf"
 
@@ -20,17 +23,13 @@ if __name__ == "__main__":
     # Print simplified results
     instructional = [m for m in results.get("matches", []) if m.get("is_instruction")]
 
-    print(f"\nFound {len(instructional)} instructional images:")
-    for match in instructional:
-        print(f"\n{match['instruction_title']}")
-        print(f"  {match['instruction_description'][:100]}...")
-
-    print(f"\nTotal: {len(results.get('matches', []))} images")
+    # Calculate PDF hash
+    pdf_path = Path("volume") / pdf_filename
+    pdf_hash = calculate_pdf_hash(str(pdf_path))
 
     # Store results in database
-    pdf_path = Path("volume") / pdf_filename
-    pdf_hash = store_gemini_results(
-        pdf_path=str(pdf_path),
+    store_gemini_results(
+        pdf_hash_bytes=pdf_hash,
         pdf_filename=pdf_filename,
         image_filenames=image_filenames,
         gemini_results=results

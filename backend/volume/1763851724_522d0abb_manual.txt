@@ -1,0 +1,435 @@
+Page 1:
+OptiPlex 5090 Micro Form Factor
+Service Manual
+Regulatory Model: D14U
+Regulatory Type: D14U005
+August 2021
+Rev. A01
+
+
+Page 2:
+Notes, cautions, and warnings
+NOTE: A NOTE indicates important information that helps you make better use of your product.
+CAUTION: A CAUTION indicates either potential damage to hardware or loss of data and tells you how to avoid
+the problem.
+WARNING: A WARNING indicates a potential for property damage, personal injury, or death.
+© 2021 Dell Inc. or its subsidiaries. All rights reserved. Dell, EMC, and other trademarks are trademarks of Dell Inc. or its subsidiaries. Other
+trademarks may be trademarks of their respective owners.
+
+
+Page 3:
+Chapter 1: Working inside your computer...................................................................................... 5
+Safety instructions.............................................................................................................................................................. 5
+Before working inside your computer.......................................................................................................................5
+Safety precautions........................................................................................................................................................ 6
+Electrostatic discharge—ESD protection............................................................................................................... 6
+ESD field service kit ..................................................................................................................................................... 7
+Transporting sensitive components.......................................................................................................................... 8
+After working inside your computer..........................................................................................................................8
+Chapter 2: Removing and installing components........................................................................... 9
+Recommended tools........................................................................................................................................................... 9
+Screw List..............................................................................................................................................................................9
+Major components of your system.................................................................................................................................11
+Side cover............................................................................................................................................................................ 12
+Removing the side cover............................................................................................................................................12
+Installing the side cover..............................................................................................................................................14
+Front bezel...........................................................................................................................................................................15
+Removing the front bezel...........................................................................................................................................15
+Installing the front bezel.............................................................................................................................................16
+Hard-drive assembly..........................................................................................................................................................17
+Removing the hard-drive assembly..........................................................................................................................17
+Removing the hard-drive bracket............................................................................................................................ 18
+Installing the hard-drive bracket.............................................................................................................................. 19
+Installing the 2.5 in. hard-drive assembly.............................................................................................................. 20
+Solid-state drive................................................................................................................................................................. 21
+Removing the M.2 2230 PCIe solid-state drive....................................................................................................21
+Installing the M.2 2230 PCIe solid-state drive..................................................................................................... 22
+Removing the M.2 2280 PCIe solid-state drive...................................................................................................23
+Installing the M.2 2280 PCIe solid-state drive..................................................................................................... 24
+WLAN card..........................................................................................................................................................................25
+Removing the WLAN card.........................................................................................................................................25
+Installing the WLAN card...........................................................................................................................................26
+Fan assembly......................................................................................................................................................................28
+Removing the fan assembly......................................................................................................................................28
+Installing the fan assembly........................................................................................................................................ 29
+Heat sink..............................................................................................................................................................................30
+Removing the heat sink............................................................................................................................................. 30
+Installing the heat sink................................................................................................................................................30
+Coin-cell battery.................................................................................................................................................................31
+Removing the coin-cell battery.................................................................................................................................31
+Installing the coin-cell battery..................................................................................................................................32
+Memory modules............................................................................................................................................................... 33
+Removing the memory modules...............................................................................................................................33
+Installing the memory modules.................................................................................................................................34
+Contents
+Contents
+3
+
+
+Page 4:
+Optional I/O modules (Type C/HDMI/VGA/DP/Serial)......................................................................................... 35
+Removing optional I/O modules (Type C/HDMI/VGA/DP/Serial).................................................................35
+Installing optional I/O modules (Type C/HDMI/VGA/DP/Serial)...................................................................36
+Speaker................................................................................................................................................................................39
+Removing the speaker................................................................................................................................................39
+Installing the speaker..................................................................................................................................................40
+Processor............................................................................................................................................................................. 41
+Removing the processor.............................................................................................................................................41
+Installing the processor..............................................................................................................................................42
+System board..................................................................................................................................................................... 44
+Removing the system board..................................................................................................................................... 44
+Installing the system board....................................................................................................................................... 45
+Chapter 3: Software.................................................................................................................... 47
+Operating system.............................................................................................................................................................. 47
+Drivers and downloads..................................................................................................................................................... 47
+Chapter 4: System setup.............................................................................................................48
+Boot menu...........................................................................................................................................................................48
+Navigation keys..................................................................................................................................................................48
+Boot Sequence...................................................................................................................................................................49
+System setup options.......................................................................................................................................................49
+Updating the BIOS............................................................................................................................................................58
+Updating the BIOS in Windows................................................................................................................................58
+Updating the BIOS in Linux and Ubuntu................................................................................................................58
+Updating the BIOS using the USB drive in Windows..........................................................................................58
+Updating the BIOS from the F12 One-Time boot menu.................................................................................... 59
+System and setup password.......................................................................................................................................... 60
+Assigning a system setup password....................................................................................................................... 60
+Deleting or changing an existing system setup password.................................................................................60
+Chapter 5: Troubleshooting.........................................................................................................62
+SupportAssist diagnostics...............................................................................................................................................62
+Diagnostic LED behavior..................................................................................................................................................62
+Recovering the operating system................................................................................................................................. 63
+Updating the BIOS in Windows......................................................................................................................................64
+Updating the BIOS using the USB drive in Windows............................................................................................... 64
+Backup media and recovery options.............................................................................................................................64
+WiFi power cycle............................................................................................................................................................... 64
+Drain residual flea power (perform hard reset)......................................................................................................... 65
+Chapter 6: Getting help and contacting Dell................................................................................ 66
+4
+Contents
+
+
+Page 5:
+Working inside your computer
+Safety instructions
+Use the following safety guidelines to protect your computer from potential damage and to ensure your personal safety. Unless
+otherwise noted, each procedure included in this document assumes that you have read the safety information that shipped
+with your computer.
+WARNING: Before working inside your computer, read the safety information that is shipped with your
+computer. For more safety best practices, see the Regulatory Compliance home page at www.dell.com/
+regulatory_compliance.
+WARNING: Disconnect your computer from all power sources before opening the computer cover or panels.
+After you finish working inside the computer, replace all covers, panels, and screws before connecting your
+computer to an electrical outlet.
+CAUTION: To avoid damaging the computer, ensure that the work surface is flat, dry, and clean.
+CAUTION: To avoid damaging the components and cards, handle them by their edges, and avoid touching the
+pins and the contacts.
+CAUTION: You should only perform troubleshooting and repairs as authorized or directed by the Dell technical
+assistance team. Damage due to servicing that is not authorized by Dell is not covered by your warranty. See the
+safety instructions that is shipped with the product or at www.dell.com/regulatory_compliance.
+CAUTION: Before touching anything inside your computer, ground yourself by touching an unpainted metal
+surface, such as the metal at the back of the computer. While you work, periodically touch an unpainted metal
+surface to dissipate static electricity which could harm internal components.
+CAUTION: When you disconnect a cable, pull it by its connector or its pull tab, not the cable itself. Some cables
+have connectors with locking tabs or thumbscrews that you must disengage before disconnecting the cable.
+When disconnecting cables, keep them evenly aligned to avoid bending the connector pins. When connecting
+cables, ensure that the ports and the connectors are correctly oriented and aligned.
+CAUTION: Press and eject any installed card from the media-card reader.
+CAUTION: Exercise caution when handling Lithium-ion batteries in laptops. Swollen batteries should not be used
+and should be replaced and disposed properly.
+NOTE: The color of your computer and certain components may appear differently than shown in this document.
+Before working inside your computer
+About this task
+NOTE: The images in this document may differ from your computer depending on the configuration you ordered.
+Steps
+1.
+Save and close all open files and exit all open applications.
+2. Shut down your computer. Click Start > 
+ Power > Shut down.
+1
+Working inside your computer
+5
+
+
+Page 6:
+NOTE: If you are using a different operating system, see the documentation of your operating system for shut-down
+instructions.
+3. Disconnect your computer and all attached devices from their electrical outlets.
+4. Disconnect all attached network devices and peripherals, such as keyboard, mouse, and monitor from your computer.
+CAUTION: To disconnect a network cable, first unplug the cable from your computer and then unplug the
+cable from the network device.
+5. Remove any media card and optical disc from your computer, if applicable.
+Safety precautions
+The safety precautions chapter details the primary steps to be taken before performing any disassembly instructions.
+Observe the following safety precautions before you perform any installation or break/fix procedures involving disassembly or
+reassembly:
+●
+Turn off the system and all attached peripherals.
+●
+Disconnect the system and all attached peripherals from AC power.
+●
+Disconnect all network cables, telephone, and telecommunications lines from the system.
+●
+Use an ESD field service kit when working inside any desktop to avoid electrostatic discharge (ESD) damage.
+●
+After removing any system component, carefully place the removed component on an anti-static mat.
+●
+Wear shoes with non-conductive rubber soles to reduce the chance of getting electrocuted.
+Standby power
+Dell products with standby power must be unplugged before you open the case. Systems that incorporate standby power are
+essentially powered while turned off. The internal power enables the system to be remotely turned on (wake on LAN) and
+suspended into a sleep mode and has other advanced power management features.
+Unplugging, pressing and holding the power button for 20 seconds should discharge residual power in the system board.
+Bonding
+Bonding is a method for connecting two or more grounding conductors to the same electrical potential. This is done through
+the use of a field service electrostatic discharge (ESD) kit. When connecting a bonding wire, ensure that it is connected to bare
+metal and never to a painted or non-metal surface. The wrist strap should be secure and in full contact with your skin, and
+ensure that you remove all jewelry such as watches, bracelets, or rings prior to bonding yourself and the equipment.
+Electrostatic discharge—ESD protection
+ESD is a major concern when you handle electronic components, especially sensitive components such as expansion cards,
+processors, memory DIMMs, and system boards. Very slight charges can damage circuits in ways that may not be obvious, such
+as intermittent problems or a shortened product life span. As the industry pushes for lower power requirements and increased
+density, ESD protection is an increasing concern.
+Due to the increased density of semiconductors used in recent Dell products, the sensitivity to static damage is now higher than
+in previous Dell products. For this reason, some previously approved methods of handling parts are no longer applicable.
+Two recognized types of ESD damage are catastrophic and intermittent failures.
+●
+Catastrophic – Catastrophic failures represent approximately 20 percent of ESD-related failures. The damage causes
+an immediate and complete loss of device functionality. An example of catastrophic failure is a memory DIMM that has
+received a static shock and immediately generates a "No POST/No Video" symptom with a beep code emitted for missing or
+nonfunctional memory.
+●
+Intermittent – Intermittent failures represent approximately 80 percent of ESD-related failures. The high rate of
+intermittent failures means that most of the time when damage occurs, it is not immediately recognizable. The DIMM
+receives a static shock, but the tracing is merely weakened and does not immediately produce outward symptoms related to
+the damage. The weakened trace may take weeks or months to melt, and in the meantime may cause degradation of memory
+integrity, intermittent memory errors, etc.
+6
+Working inside your computer
+
+
+Page 7:
+The more difficult type of damage to recognize and troubleshoot is the intermittent (also called latent or "walking wounded")
+failure.
+Perform the following steps to prevent ESD damage:
+●
+Use a wired ESD wrist strap that is properly grounded. The use of wireless anti-static straps is no longer allowed; they do not
+provide adequate protection. Touching the chassis before handling parts does not ensure adequate ESD protection on parts
+with increased sensitivity to ESD damage.
+●
+Handle all static-sensitive components in a static-safe area. If possible, use anti-static floor pads and workbench pads.
+●
+When unpacking a static-sensitive component from its shipping carton, do not remove the component from the anti-static
+packing material until you are ready to install the component. Before unwrapping the anti-static packaging, ensure that you
+discharge static electricity from your body.
+●
+Before transporting a static-sensitive component, place it in an anti-static container or packaging.
+ESD field service kit
+The unmonitored Field Service kit is the most commonly used service kit. Each Field Service kit includes three main components:
+anti-static mat, wrist strap, and bonding wire.
+Components of an ESD field service kit
+The components of an ESD field service kit are:
+●
+Anti-Static Mat – The anti-static mat is dissipative and parts can be placed on it during service procedures. When using an
+anti-static mat, your wrist strap should be snug and the bonding wire should be connected to the mat and to any bare metal
+on the system being worked on. Once deployed properly, service parts can be removed from the ESD bag and placed directly
+on the mat. ESD-sensitive items are safe in your hand, on the ESD mat, in the system, or inside a bag.
+●
+Wrist Strap and Bonding Wire – The wrist strap and bonding wire can be either directly connected between your wrist
+and bare metal on the hardware if the ESD mat is not required, or connected to the anti-static mat to protect hardware that
+is temporarily placed on the mat. The physical connection of the wrist strap and bonding wire between your skin, the ESD
+mat, and the hardware is known as bonding. Use only Field Service kits with a wrist strap, mat, and bonding wire. Never
+use wireless wrist straps. Always be aware that the internal wires of a wrist strap are prone to damage from normal wear
+and tear, and must be checked regularly with a wrist strap tester in order to avoid accidental ESD hardware damage. It is
+recommended to test the wrist strap and bonding wire at least once per week.
+●
+ESD Wrist Strap Tester – The wires inside of an ESD strap are prone to damage over time. When using an unmonitored
+kit, it is a best practice to regularly test the strap prior to each service call, and at a minimum, test once per week. A
+wrist strap tester is the best method for doing this test. If you do not have your own wrist strap tester, check with your
+regional office to find out if they have one. To perform the test, plug the wrist-strap's bonding-wire into the tester while it is
+strapped to your wrist and push the button to test. A green LED is lit if the test is successful; a red LED is lit and an alarm
+sounds if the test fails.
+●
+Insulator Elements – It is critical to keep ESD sensitive devices, such as plastic heat sink casings, away from internal parts
+that are insulators and often highly charged.
+●
+Working Environment – Before deploying the ESD Field Service kit, assess the situation at the customer location. For
+example, deploying the kit for a server environment is different than for a desktop or portable environment. Servers are
+typically installed in a rack within a data center; desktops or portables are typically placed on office desks or cubicles. Always
+look for a large open flat work area that is free of clutter and large enough to deploy the ESD kit with additional space to
+accommodate the type of system that is being repaired. The workspace should also be free of insulators that can cause an
+ESD event. On the work area, insulators such as Styrofoam and other plastics should always be moved at least 12 inches or
+30 centimeters away from sensitive parts before physically handling any hardware components
+●
+ESD Packaging – All ESD-sensitive devices must be shipped and received in static-safe packaging. Metal, static-shielded
+bags are preferred. However, you should always return the damaged part using the same ESD bag and packaging that the
+new part arrived in. The ESD bag should be folded over and taped shut and all the same foam packing material should be
+used in the original box that the new part arrived in. ESD-sensitive devices should be removed from packaging only at an
+ESD-protected work surface, and parts should never be placed on top of the ESD bag because only the inside of the bag is
+shielded. Always place parts in your hand, on the ESD mat, in the system, or inside an anti-static bag.
+●
+Transporting Sensitive Components – When transporting ESD sensitive components such as replacement parts or parts
+to be returned to Dell, it is critical to place these parts in anti-static bags for safe transport.
+Working inside your computer
+7
+
+
+Page 8:
+ESD protection summary
+It is recommended that all field service technicians use the traditional wired ESD grounding wrist strap and protective anti-static
+mat at all times when servicing Dell products. In addition, it is critical that technicians keep sensitive parts separate from all
+insulator parts while performing service and that they use anti-static bags for transporting sensitive components.
+Transporting sensitive components
+When transporting ESD sensitive components such as replacement parts or parts to be returned to Dell, it is critical to place
+these parts in anti-static bags for safe transport.
+After working inside your computer
+About this task
+CAUTION: Leaving stray or loose screws inside your computer may severely damage your computer.
+Steps
+1.
+Replace all screws and ensure that no stray screws remain inside your computer.
+2. Connect any external devices, peripherals, or cables you removed before working on your computer.
+3. Replace any media cards, discs, or any other parts that you removed before working on your computer.
+4. Connect your computer and all attached devices to their electrical outlets.
+5. Turn on your computer.
+8
+Working inside your computer
+
+
+Page 9:
+Removing and installing components
+NOTE: The images in this document may differ from your computer depending on the configuration you ordered.
+Recommended tools
+The procedures in this document require the following tools:
+●
+Phillips #0 screwdriver
+●
+Phillips #1 screwdriver
+●
+Flat headed screwdriver
+●
+Plastic scribe
+Screw List
+The following table shows the screw list and the image of the screws.
+NOTE: When removing screws from a component, it is recommended to note the screw type, the quantity of screws, and
+then place them in a screw storage box. This is to ensure that the correct number of screws and correct screw type is
+restored when the component is replaced.
+NOTE: Some computers have magnetic surfaces. Ensure that the screws are not left attached to such surface when
+replacing a component.
+NOTE: Screw color may vary with the configuration ordered.
+NOTE: As the VGA cables screw is installed or removed from the back of the computer, the VGA cables may use a hex nut.
+Table 1. Screw list 
+Component
+Screw type
+Quantity
+Image
+Side cover
+#6-32 (Captive screws)
+1
+System board
+#6-32
+M2x4
+3
+4
+Hard drive caddy support
+#6-32
+1
+Heat sink
+M3x25 (Captive screws)
+3
+2
+Removing and installing components
+9
+
+
+Page 10:
+Table 1. Screw list (continued)
+Component
+Screw type
+Quantity
+Image
+WLAN card
+M2x3.5
+1
+M.2 2230/2280 Solid-state drive
+M2x3.5
+1
+10
+Removing and installing components
+
+
+Page 11:
+Major components of your system
+1.
+Side cover
+Removing and installing components
+11
+
+
+Page 12:
+2. System fan
+3. Heat sink
+4. Speaker
+5. Hard-disk drive support
+6. System board
+7.
+Chassis
+8. Processor
+9. M.2 WLAN card
+10. Memory module
+11. M.2 Solid-state drive
+12. 2.5-inch hard-disk drive assembly
+NOTE: Dell provides a list of components and their part numbers for the original system configuration purchased. These
+parts are available according to warranty coverages purchased by the customer. Contact your Dell sales representative for
+purchase options.
+Side cover
+Removing the side cover
+Prerequisites
+1.
+Follow the procedure in before working inside your computer.
+NOTE: Ensure that you remove the security cable from the security-cable slot (if applicable).
+About this task
+The following images indicate the location of the side cover and provide a visual representation of the removal procedure.
+12
+Removing and installing components
+
+
+Page 13:
+Steps
+1.
+Loosen the thumbscrew (6x32) that secures the side cover to the system.
+Removing and installing components
+13
+
+
+Page 14:
+2. Slide the side cover towards the front of the system and lift the cover.
+Installing the side cover
+Prerequisites
+If you are replacing a component, remove the existing component before performing the installation procedure.
+About this task
+The following image indicates the location of the side cover and provides a visual representation of the installation procedure.
+14
+Removing and installing components
+
+
+Page 15:
+Steps
+1.
+Align the side cover with the grooves on the chassis.
+2. Slide the side cover towards the back of the system to install it.
+3. Tighten the thumbscrew (6x32) to secure the side cover to the system.
+Next steps
+1.
+Follow the procedure in after working inside your computer.
+Front bezel
+Removing the front bezel
+Prerequisites
+1.
+Follow the procedure in before working inside your computer.
+2. Remove the side cover.
+About this task
+The following images indicate the location of the front bezel and provide a visual representation of the removal procedure.
+Removing and installing components
+15
+

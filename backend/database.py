@@ -4,19 +4,6 @@ from pathlib import Path
 
 con = sqlite3.connect('./volume/instructions.db')
 
-def calculate_pdf_hash(file_path: str) -> bytes:
-    """Reads a file in chunks and returns its SHA-256 hash as raw bytes."""
-    sha256_hash = hashlib.sha256()
-    try:
-        with open(file_path, "rb") as f:
-            # Read in 4K chunks to be memory efficient with large PDFs
-            for byte_block in iter(lambda: f.read(4096), b""):
-                sha256_hash.update(byte_block)
-        return sha256_hash.digest() # Returns binary (bytes)
-    except FileNotFoundError:
-        print(f"Error: File {file_path} not found.")
-        return b''
-
 def init_db():
     con.execute('''
         CREATE TABLE IF NOT EXISTS instructions (
@@ -33,8 +20,21 @@ def init_db():
     ''')
     con.commit()
 
+def calculate_pdf_hash(file_path: str) -> bytes:
+    """Reads a file in chunks and returns its SHA-256 hash as raw bytes."""
+    sha256_hash = hashlib.sha256()
+    try:
+        with open(file_path, "rb") as f:
+            # Read in 4K chunks to be memory efficient with large PDFs
+            for byte_block in iter(lambda: f.read(4096), b""):
+                sha256_hash.update(byte_block)
+        return sha256_hash.digest() # Returns binary (bytes)
+    except FileNotFoundError:
+        print(f"Error: File {file_path} not found.")
+        return b''
+
 def store_gemini_results(
-    pdf_path: str,
+    pdf_hash_bytes: bytes,
     pdf_filename: str,
     image_filenames: list,
     gemini_results: dict
@@ -45,7 +45,7 @@ def store_gemini_results(
     Creates a separate instruction text file for each step.
 
     Args:
-        pdf_path: Full path to PDF file (for hash calculation)
+        pdf_hash_bytes: PDF hash as bytes
         pdf_filename: PDF filename (without volume/)
         image_filenames: List of all image filenames
         gemini_results: Results from Gemini processing
@@ -53,8 +53,6 @@ def store_gemini_results(
     Returns:
         PDF hash as bytes
     """
-    # Calculate hash from the actual file
-    pdf_hash_bytes = calculate_pdf_hash(pdf_path)
 
     if not pdf_hash_bytes:
         return b''
@@ -125,5 +123,3 @@ def store_gemini_results(
     print(f"  Steps: {step_number} (0 to {step_number - 1})")
 
     return pdf_hash_bytes
-
-init_db()

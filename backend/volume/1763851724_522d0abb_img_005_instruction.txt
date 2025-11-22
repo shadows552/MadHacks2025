@@ -1,0 +1,3 @@
+Major components of your system
+
+Identify the major components of the system using this exploded view diagram. Key parts include the side cover, fan assembly, heat sink, speaker, system board, and drive assemblies.
