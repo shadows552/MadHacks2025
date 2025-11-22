@@ -9,3 +9,4 @@ backend/.env
 /.tmp/
 output/*
 backend/volume/*
+.idea/
