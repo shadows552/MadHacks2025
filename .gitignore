@@ -8,3 +8,5 @@ backend/.venv/
 backend/.env
 /.tmp/
 output/*
+backend/volume/*
+.idea/
