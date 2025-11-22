@@ -1,0 +1,8 @@
+__pycache__/
+.venv
+venv/
+backend/venv/
+backend/.venv
+.env
+/.tmp/
+output/
