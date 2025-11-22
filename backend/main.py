@@ -13,7 +13,7 @@ if __name__ == "__main__":
     # Extract filenames and instructions
     image_filenames, instructions_filename = extract_pdf_content(pdf_filename)
 
-    # Process with Gemini
+    # Process with Gemini, returns 
     results = process_manual_images(image_filenames, instructions_filename)
 
     # Print simplified results

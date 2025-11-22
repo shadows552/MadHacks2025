@@ -1,9 +1,10 @@
 __pycache__/
+backend/__pycache/
 .venv
-venv/
+venv/*
 backend/venv/
-backend/.venv
+backend/.venv/
 .env
 backend/.env
 /.tmp/
-output/
+output/*
