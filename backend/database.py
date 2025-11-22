@@ -18,13 +18,12 @@ def calculate_pdf_hash(file_path: str) -> bytes:
 
 def init_db():
     con.execute('''
-        CREATE TABLE IF NOT EXISTS pdf_steps (
-            pdf_hash BLOB,
-            pdf_name TEXT,
-            step INTEGER,
+        CREATE TABLE IF NOT EXISTS database (
+            hash BLOB,
             pdf_filename TEXT,
-            model_filename TEXT,
-            voice_filename TEXT,
+            step INTEGER,
+            glb_filename TEXT,
+            mp3_filename TEXT,
             instruction_filename TEXT,
 
             PRIMARY KEY (pdf_hash, step)
@@ -42,14 +41,13 @@ def add_pdf_step(pdf_path: str, step: int, model_filename: str, voice_filename: 
     # 2. Insert the bytes directly into the BLOB column
     # Note: We still store pdf_path as text for human reference, but it's not the PK
     con.execute('''
-        INSERT INTO pdf_steps (pdf_hash, pdf_name, step, pdf_filename, model_filename, voice_filename, instruction_filename)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', (pdf_hash_bytes, pdf_path, step, pdf_path, model_filename, voice_filename, instruction_filename))
+        INSERT INTO database (hash, pdf_filename, step, glb_filename, mp3_filename, instruction_filename)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (hash, pdf_filename, step, glb_filename, mp3_filename, instruction_filename))
     
     con.commit()
     print(f"Added step {step} for PDF (Hash: {pdf_hash_bytes.hex()[:8]}...)")
 
 init_db()
-# add_pdf_step('my_document.pdf', 1, 'gpt4.model', 'voice_en.wav', 'instr_01.txt')
 
 con.close()
