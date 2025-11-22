@@ -4,5 +4,6 @@ venv/
 backend/venv/
 backend/.venv
 .env
+backend/.env
 /.tmp/
 output/

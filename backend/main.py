@@ -28,7 +28,7 @@ def process_pdf(pdf_filename):
 
 if __name__ == "__main__":
     # Hardcoded PDF for now - will be replaced with Flask endpoint
-    pdf_filename = "optiplex-5090-desktop_owners-manual2_en-us.pdf"
+    pdf_filename = "test.pdf"
 
     print("Processing PDF...")
     results = process_pdf(pdf_filename)
