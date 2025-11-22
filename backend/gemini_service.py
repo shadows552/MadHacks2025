@@ -207,10 +207,15 @@ Only return the JSON object, no additional text."""
 
     try:
         # Generate response
+        print("Calling model.generate_content()...")
+        print(f"Content parts: {len(content)} (1 prompt + {len(images)} images)")
         response = model.generate_content(content)
+        print("Response received!")
 
         # Parse the response
+        print("Parsing response text...")
         response_text = response.text.strip()
+        print(f"Response length: {len(response_text)} characters")
 
         # Remove markdown code blocks if present
         if response_text.startswith("```json"):
@@ -243,40 +248,3 @@ Only return the JSON object, no additional text."""
             if temp_file.exists():
                 temp_file.unlink()
                 print(f"Cleaned up temp file: {temp_file.name}")
-
-
-if __name__ == "__main__":
-    # Example usage for testing
-    import sys
-
-    if len(sys.argv) < 3:
-        print("Usage: python gemini_service.py <instructions_filename> <image1> <image2> ...")
-        print("Example: python gemini_service.py instructions.txt img_001.png img_002.png")
-        sys.exit(1)
-
-    instructions_file = sys.argv[1]
-    image_files = sys.argv[2:]
-
-    try:
-        results = process_manual_images(image_files, instructions_file)
-
-        # Print results
-        print("\n" + "=" * 80)
-        print("RESULTS:")
-        print("=" * 80)
-        for match in results.get("matches", []):
-            print(f"\nImage {match['image_index'] + 1}:")
-            print(f"  Is Instruction: {match['is_instruction']}")
-            print(f"  Title: {match['instruction_title']}")
-            print(f"  Description: {match['instruction_description'][:100]}...")
-            print(f"  Confidence: {match['confidence']}")
-
-        # Save results
-        output_path = Path("volume") / "gemini_results.json"
-        with open(output_path, "w") as f:
-            json.dump(results, f, indent=2)
-        print(f"\n\nResults saved to: {output_path}")
-
-    except Exception as e:
-        print(f"Error: {e}")
-        sys.exit(1)
