@@ -18,35 +18,112 @@ def calculate_pdf_hash(file_path: str) -> bytes:
 
 def init_db():
     con.execute('''
-        CREATE TABLE IF NOT EXISTS database (
+        CREATE TABLE IF NOT EXISTS instructions (
             hash BLOB,
             pdf_filename TEXT,
             step INTEGER,
+            image_filename TEXT,
             glb_filename TEXT,
             mp3_filename TEXT,
             instruction_filename TEXT,
 
-            PRIMARY KEY (pdf_hash, step)
+            PRIMARY KEY (hash, step)
         )
     ''')
     con.commit()
 
-def add_pdf_step(pdf_path: str, step: int, model_filename: str, voice_filename: str, instruction_filename: str):
-    # 1. Calculate hash from the actual file
-    pdf_hash_bytes = calculate_pdf_hash(pdf_path)
-    
-    if not pdf_hash_bytes:
-        return # Stop if file not found
+def store_gemini_results(
+    pdf_path: str,
+    pdf_filename: str,
+    instructions_filename: str,
+    image_filenames: list,
+    gemini_results: dict
+) -> bytes:
+    """
+    Store Gemini processing results in database.
+    Only stores instructional images with sequential step numbers (0 to N, no gaps).
 
-    # 2. Insert the bytes directly into the BLOB column
-    # Note: We still store pdf_path as text for human reference, but it's not the PK
-    con.execute('''
-        INSERT INTO database (hash, pdf_filename, step, glb_filename, mp3_filename, instruction_filename)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ''', (hash, pdf_filename, step, glb_filename, mp3_filename, instruction_filename))
-    
+    Args:
+        pdf_path: Full path to PDF file (for hash calculation)
+        pdf_filename: PDF filename (without volume/)
+        instructions_filename: Instructions text filename (without volume/)
+        image_filenames: List of all image filenames
+        gemini_results: Results from Gemini processing
+
+    Returns:
+        PDF hash as bytes
+    """
+    # Calculate hash from the actual file
+    pdf_hash_bytes = calculate_pdf_hash(pdf_path)
+
+    if not pdf_hash_bytes:
+        return b''
+
+    # Check if this PDF already exists
+    cursor = con.execute(
+        'SELECT COUNT(*) FROM instructions WHERE hash = ?',
+        (pdf_hash_bytes,)
+    )
+    existing_count = cursor.fetchone()[0]
+
+    if existing_count > 0:
+        print(f"\nPDF already in database (Hash: {pdf_hash_bytes.hex()[:8]}...)")
+        print(f"Skipping {existing_count} existing steps.")
+        return pdf_hash_bytes
+
+    # Create instruction file with titles and descriptions (newline separated)
+    # Filter only instructional images and store with sequential step numbers
+    step_number = 0
+    titles = []
+    descriptions = []
+
+    for match in gemini_results.get("matches", []):
+        if not match.get("is_instruction"):
+            continue  # Skip non-instructional images
+
+        titles.append(match["instruction_title"])
+        descriptions.append(match["instruction_description"])
+
+        image_index = match["image_index"]
+        image_filename = image_filenames[image_index]
+
+        # Insert row for this step
+        con.execute('''
+            INSERT INTO instructions (
+                hash,
+                pdf_filename,
+                step,
+                image_filename,
+                glb_filename,
+                mp3_filename,
+                instruction_filename
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            pdf_hash_bytes,
+            pdf_filename,
+            step_number,
+            image_filename,
+            None,  # glb added later
+            None,  # mp3 added later
+            instructions_filename
+        ))
+
+        step_number += 1
+
     con.commit()
-    print(f"Added step {step} for PDF (Hash: {pdf_hash_bytes.hex()[:8]}...)")
+
+    # Write titles and descriptions to instruction file
+    instruction_content = "\n".join(titles) + "\n\n" + "\n".join(descriptions)
+    instruction_path = Path("volume") / instructions_filename
+    with open(instruction_path, "w", encoding="utf-8") as f:
+        f.write(instruction_content)
+
+    print(f"\nStored in database:")
+    print(f"  PDF Hash: {pdf_hash_bytes.hex()[:16]}...")
+    print(f"  PDF Filename: {pdf_filename}")
+    print(f"  Steps: {step_number} (0 to {step_number - 1})")
+
+    return pdf_hash_bytes
 
 init_db()
 
