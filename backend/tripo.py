@@ -12,13 +12,18 @@ if API_KEY is None:
     raise ValueError("Please set the TRIPO_API_KEY environment variable.")
 
 
-async def image_to_model(image_path: str, output_dir: str):
+async def image_to_model(image_path: str, pdf_hash_hex: str, step: int, output_dir: str = "volume"):
     """
     Create a 3D model from an image.
 
     Args:
         image_path: Path to the input image file.
+        pdf_hash_hex: PDF hash (hex string, first 16 chars).
+        step: Step number for naming.
         output_dir: Directory to save output files.
+
+    Returns:
+        GLB filename if successful, None otherwise.
     """
     async with TripoClient(api_key=API_KEY) as client:
         # Create task
@@ -40,15 +45,26 @@ async def image_to_model(image_path: str, output_dir: str):
                 print("Downloading model files...")
                 downloaded_files = await client.download_task_models(task, output_dir)
 
-                # Print downloaded file paths
+                # Find and rename the GLB file to our naming convention
+                glb_filename = f"{pdf_hash_hex}-{step}.glb"
+                glb_output_path = os.path.join(output_dir, glb_filename)
+
                 for model_type, file_path in downloaded_files.items():
-                    if file_path:
-                        print(f"Downloaded {model_type}: {file_path}")
+                    if file_path and file_path.endswith('.glb'):
+                        # Rename to our convention
+                        os.rename(file_path, glb_output_path)
+                        print(f"Saved GLB: {glb_filename}")
+                        return glb_filename
+
+                print("Warning: No GLB file found in downloaded models")
+                return None
 
             except Exception as e:
                 print(f"Failed to download models: {str(e)}")
+                return None
         else:
             print(f"Task failed with status: {task.status}")
+            return None
 
 
 async def multiview_to_model(front: str, back: Optional[str], left: Optional[str], right: Optional[str], output_dir: str):

@@ -167,3 +167,34 @@ def update_mp3_filename(pdf_hash_bytes: bytes, step: int, mp3_filename: str):
         (mp3_filename, pdf_hash_bytes, step)
     )
     con.commit()
+
+def update_glb_filename(pdf_hash_bytes: bytes, step: int, glb_filename: str):
+    """
+    Update the GLB filename for a specific instruction in the database.
+
+    Args:
+        pdf_hash_bytes: PDF hash
+        step: Step number
+        glb_filename: GLB filename (without volume/)
+    """
+    con.execute(
+        'UPDATE instructions SET glb_filename = ? WHERE hash = ? AND step = ?',
+        (glb_filename, pdf_hash_bytes, step)
+    )
+    con.commit()
+
+def get_instructions_with_images(pdf_hash_bytes: bytes) -> list:
+    """
+    Get all instructions with their image filenames for a given PDF hash.
+
+    Args:
+        pdf_hash_bytes: PDF hash
+
+    Returns:
+        List of tuples (step, image_filename)
+    """
+    cursor = con.execute(
+        'SELECT step, image_filename FROM instructions WHERE hash = ? ORDER BY step',
+        (pdf_hash_bytes,)
+    )
+    return cursor.fetchall()
