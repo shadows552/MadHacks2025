@@ -181,6 +181,21 @@ def update_mp3_filename(pdf_hash_bytes: bytes, step: int, mp3_filename: str):
     )
     con.commit()
 
+def update_mp3_filename_by_hash_hex(hash_hex: str, step: int, mp3_filename: str):
+    """
+    Update the MP3 filename for a specific instruction using hash hex prefix.
+
+    Args:
+        hash_hex: First 16 chars of PDF hash
+        step: Step number
+        mp3_filename: MP3 filename (without volume/)
+    """
+    con.execute(
+        'UPDATE instructions SET mp3_filename = ? WHERE hex(hash) LIKE ? AND step = ?',
+        (mp3_filename, hash_hex.upper() + '%', step)
+    )
+    con.commit()
+
 def update_glb_filename(pdf_hash_bytes: bytes, step: int, glb_filename: str):
     """
     Update the GLB filename for a specific instruction in the database.

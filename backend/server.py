@@ -21,6 +21,7 @@ from database import (
     get_instructions_by_hash,
     get_instructions_with_images,
     update_mp3_filename,
+    update_mp3_filename_by_hash_hex,
     update_glb_filename,
     get_all_pdfs,
     get_pdf_filename_by_hash,
@@ -533,9 +534,7 @@ async def get_mp3(hash: str, step: int):
             mp3_filename = await tts(instruction_text, hash, step, output_dir="volume")
 
             # Update database with new MP3 filename
-            # Convert hash hex to bytes for database update
-            hash_bytes = bytes.fromhex(hash + "0" * (64 - len(hash)))  # Pad to full hash length
-            update_mp3_filename(hash_bytes, step, mp3_filename)
+            update_mp3_filename_by_hash_hex(hash, step, mp3_filename)
 
             mp3_path = volume_dir / mp3_filename
             print(f"MP3 regenerated successfully: {mp3_filename}")
