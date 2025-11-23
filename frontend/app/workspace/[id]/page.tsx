@@ -1,12 +1,12 @@
 "use client";
 // 1. Add 'use' to imports
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect, use, useRef } from 'react';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  ChevronRight, 
-  Box, 
+import {
+  ArrowLeft,
+  ArrowRight,
+  ChevronRight,
+  Box,
   Maximize2,
   PlayCircle,
   FileText,
@@ -14,6 +14,13 @@ import {
   Loader2
 } from 'lucide-react';
 import AssemblyScene from '@/components/AssemblyScene';
+import { Document, Page, pdfjs } from 'react-pdf';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+
+// Configure PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 // --- TYPES ---
 interface ManualStep {
@@ -88,9 +95,14 @@ export default function Workspace({ params }: WorkspaceProps) {
   const [manualData, setManualData] = useState<ManualData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  // PDF state
+  const [numPages, setNumPages] = useState<number | null>(null);
+  const pdfContainerRef = useRef<HTMLDivElement>(null);
+  const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
   // --- FETCH DATA ---
   useEffect(() => {
@@ -119,6 +131,17 @@ export default function Workspace({ params }: WorkspaceProps) {
     setIsPlaying(true);
     const timer = setTimeout(() => setIsPlaying(false), 4000);
     return () => clearTimeout(timer);
+  }, [currentStep, activeStepData]);
+
+  // --- PDF SCROLL EFFECT ---
+  useEffect(() => {
+    if (!activeStepData) return;
+    const targetPage = activeStepData.pdfPage;
+    const pageElement = pageRefs.current.get(targetPage);
+
+    if (pageElement && pdfContainerRef.current) {
+      pageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }, [currentStep, activeStepData]);
 
   if (loading) {
@@ -161,37 +184,65 @@ export default function Workspace({ params }: WorkspaceProps) {
         </div>
       </header>
 
-      {/* MAIN SPLIT VIEW */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        
-        {/* LEFT PANEL: REAL PDF VIEWER */}
-        <div className="w-full md:w-1/2 bg-zinc-800 border-b md:border-b-0 md:border-r border-zinc-700 relative flex flex-col h-1/2 md:h-full">
-           <div className="h-12 border-b border-zinc-700 flex items-center justify-between px-4 bg-zinc-800/50 backdrop-blur shrink-0">
-              <span className="text-xs font-medium text-zinc-400 flex items-center gap-2">
-                <FileText className="w-4 h-4" />
-                {manualData.pdfTitle}
-              </span>
-              <span className="text-xs bg-black/30 px-2 py-1 rounded text-zinc-300">
-                Page {activeStepData.pdfPage}
-              </span>
-           </div>
+      {/* MAIN SPLIT VIEW WITH RESIZABLE PANELS */}
+      <div className="flex-1 overflow-hidden">
+        <PanelGroup direction="horizontal">
+          {/* LEFT PANEL: PDF VIEWER */}
+          <Panel defaultSize={50} minSize={30}>
+            <div className="w-full h-full bg-zinc-800 border-r border-zinc-700 relative flex flex-col">
+              <div className="h-12 border-b border-zinc-700 flex items-center justify-between px-4 bg-zinc-800/50 backdrop-blur shrink-0">
+                <span className="text-xs font-medium text-zinc-400 flex items-center gap-2">
+                  <FileText className="w-4 h-4" />
+                  {manualData.pdfTitle}
+                </span>
+                <span className="text-xs bg-black/30 px-2 py-1 rounded text-zinc-300">
+                  Page {activeStepData.pdfPage}
+                </span>
+              </div>
 
-           {/* PDF IFRAME CONTAINER */}
-           <div className="flex-1 bg-zinc-900 relative">
-              <iframe 
-                /* 4. FIX: Add key prop to force re-render when page changes.
-                   This solves your previous issue where the PDF wouldn't update.
-                */
-                key={activeStepData.pdfPage} 
-                src={`/sample.pdf#page=${activeStepData.pdfPage}`}
-                className="w-full h-full border-0"
-                title="Instruction Manual PDF"
-              />
-           </div>
-        </div>
+              {/* PDF DOCUMENT CONTAINER WITH SCROLLING */}
+              <div
+                ref={pdfContainerRef}
+                className="flex-1 bg-zinc-900 relative overflow-auto"
+              >
+                <Document
+                  file="/sample.pdf"
+                  onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+                  loading={
+                    <div className="flex items-center justify-center h-full">
+                      <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+                    </div>
+                  }
+                >
+                  {numPages &&
+                    Array.from(new Array(numPages), (el, index) => (
+                      <div
+                        key={`page_${index + 1}`}
+                        ref={(el) => {
+                          if (el) pageRefs.current.set(index + 1, el);
+                        }}
+                        className="mb-4"
+                      >
+                        <Page
+                          pageNumber={index + 1}
+                          renderTextLayer={true}
+                          renderAnnotationLayer={true}
+                          className="mx-auto"
+                          width={Math.min(window.innerWidth * 0.4, 800)}
+                        />
+                      </div>
+                    ))}
+                </Document>
+              </div>
+            </div>
+          </Panel>
 
-        {/* RIGHT PANEL: DYNAMIC 3D SCENE */}
-        <div className="w-full md:w-1/2 bg-black relative h-1/2 md:h-full">
+          {/* RESIZE HANDLE */}
+          <PanelResizeHandle className="w-1 bg-zinc-700 hover:bg-indigo-500 transition-colors cursor-col-resize" />
+
+          {/* RIGHT PANEL: DYNAMIC 3D SCENE */}
+          <Panel defaultSize={50} minSize={30}>
+            <div className="w-full h-full bg-black relative">
           
           <div className="absolute inset-0 z-0">
             <AssemblyScene modelUrl={activeStepData.modelUrl} />
@@ -248,7 +299,9 @@ export default function Workspace({ params }: WorkspaceProps) {
              </button>
           </div>
 
-        </div>
+            </div>
+          </Panel>
+        </PanelGroup>
       </div>
     </div>
   );

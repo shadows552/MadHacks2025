@@ -48,7 +48,7 @@ interface AssemblySceneProps {
 export default function AssemblyScene({ modelUrl }: AssemblySceneProps) {
   return (
     <div className="w-full h-full bg-zinc-900">
-      <Canvas shadows dpr={[1, 2]} camera={{ position: [4, 4, 4], fov: 50 }}>
+      <Canvas shadows dpr={[1, 2]} camera={{ position: [6, 6, 6], fov: 75 }}>
         
         <Suspense fallback={<Loader />}>
           {/* 2. FIX: Remove 'environment="forest"' from Stage.
