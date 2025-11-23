@@ -1,0 +1,3 @@
+Removing the 3.5-inch hard drive
+
+Disconnect the cables, push the release tab towards the hard drive to free the caddy, and then slide the hard-drive caddy out of the chassis.

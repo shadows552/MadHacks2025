@@ -1,0 +1,3 @@
+Removing the front bezel
+
+Gently pry the tabs on the side of the front bezel to release them, then rotate the bezel outward to remove it from the chassis.

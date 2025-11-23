@@ -1,0 +1,167 @@
+Page 1:
+Steps
+1.
+Slide the release latch to the right until your hear a click and slide the cover towards the back of the computer.
+2. Lift the side cover from the computer.
+Removing and installing components
+15
+
+
+Page 2:
+Steps
+1.
+Place the side cover onto the system aligning the tabs on the chassis.
+2. Slide the side cover towards the front of the computer until you hear the release latch click.
+Next steps
+1.
+Follow the procedure in after working inside your computer.
+Front bezel
+Removing the front bezel
+Prerequisites
+1.
+Follow the procedure in before working inside your computer.
+2. Remove the side cover.
+About this task
+The following images indicate the location of the front bezel and provide a visual representation of the removal procedure.
+Steps
+1.
+Gently pry and release the front-bezel tabs sequentially from the top.
+2. Rotate the front bezel outward from the chassis.
+3. Remove the front bezel from the chassis.
+Removing and installing components
+17
+
+
+Page 3:
+About this task
+The following images indicate the location of the 3.5-inch hard-drive caddy and provide a visual representation of the removal 
+procedure.
+Steps
+1.
+Disconnect the hard-drive data and power cables from the connectors on the hard drive and push the left tab towards the 
+hard-drive to free the caddy from the chassis
+2. Release the hard-drive caddy from the tabs on the right side and slide the hard-drive caddy out.
+NOTE: The hard-drive's power and data cables can only connected from the bottom side of the caddy. Make a note of 
+the orientation of the hard drive to avoid errors during installation.
+Removing the 3.5-inch hard drive
+Prerequisites
+1.
+Follow the procedure in before working inside your computer.
+2. Remove the side cover.
+3. Remove the front bezel.
+4. Remove the 3.5-inch hard-drive caddy.
+About this task
+The following images indicate the location of the 3.5-inch hard drive and provide a visual representation of the removal 
+procedure.
+24
+Removing and installing components
+
+
+Page 4:
+Steps
+1.
+Align the solid-state drive with the socket on the system board and slide it in.
+2. Replace the single (M2X3) screw that secures the M.2 solid-state drive to the system board.
+Next steps
+1.
+Install the 2.5/3.5-inch hard-drive caddy.
+2. Install the front bezel.
+3. Install the side cover.
+4. Follow the procedure in after working inside your computer.
+Memory modules
+Removing the memory modules
+Prerequisites
+1.
+Follow the procedure in before working inside your computer.
+2. Remove the side cover.
+3. Remove the 2.5/3.5-inch hard-drive caddy.
+4. Remove the hard-drive and optical-drive bracket.
+NOTE: CAUTION: To prevent damage to the memory module, hold the memory module by the edges. Do not touch the 
+components on the memory module.
+About this task
+The following images indicate the location of the memory modules and provide a visual representation of the removal procedure.
+Removing and installing components
+31
+
+
+Page 5:
+Steps
+1.
+Use your fingertips to carefully spread apart the securing-clips on each end of the memory-module slot.
+2. Grasp the memory module near the securing clip, and then gently ease the memory module out of the memory-module slot.
+NOTE: Grasp the memory module near the securing clip, and then gently ease the memory module out of the memory-
+module slot.
+NOTE: If the memory module is difficult to remove, gently ease the memory module back and forth to remove it from 
+the slot.
+Installing the memory modules
+Prerequisites
+If you are replacing a component, remove the existing component before performing the installation procedure.
+About this task
+The following image indicates the location of the memory modules and provides a visual representation of the installation 
+procedure.
+32
+Removing and installing components
+
+
+Page 6:
+Steps
+1.
+Ensure that the securing clips are in an open position.
+2. Align the notch on the memory module with the tab on the memory-module slot.
+3. Insert the memory module into the memory-module connector until the memory module snaps into position and the securing 
+clip locks in place.
+NOTE: The securing clips return to the locked position. If you do not hear the click, remove the memory module and 
+reinstall it.
+NOTE: Repeat step 1 to step 3 when installing more than one memory module in your computer.
+Next steps
+1.
+Install the 2.5/3.5-inch hard-drive caddy.
+2. Install the side cover.
+3. Follow the procedure in after working inside your computer.
+Hard-drive and optical-drive bracket
+Removing the hard-drive and optical-drive bracket
+Prerequisites
+1.
+Follow the procedure in before working inside your computer.
+2. Remove the side cover.
+3. Remove the front bezel.
+4. Remove the 2.5/3.5-inch hard-drive caddy.
+About this task
+The following images indicate the location of the hard-drive and optical-drive bracket and provide a visual representation of the 
+removal procedure.
+Removing and installing components
+33
+
+
+Page 7:
+Steps
+1.
+Align and insert the front-bezel tabs with the slots on the chassis.
+2. Rotate the front bezel towards the chassis and snap it into place.
+Next steps
+1.
+Install the side cover.
+2. Follow the procedure in after working inside your computer.
+2.5-inch hard drive
+Removing the 2.5-inch hard-drive caddy
+Prerequisites
+1.
+Follow the procedure in before working inside your computer.
+2. Remove the side cover.
+3. Remove the front bezel.
+About this task
+The following images indicate the location of the 2.5-inch hard-drive caddy and provide a visual representation of the removal 
+procedure.
+Removing and installing components
+19
+
+
+Page 8:
+Installing the side cover
+Prerequisites
+If you are replacing a component, remove the existing component before performing the installation procedure.
+About this task
+The following image shows the side cover and provides a visual representation of the installation procedure.
+16
+Removing and installing components
+

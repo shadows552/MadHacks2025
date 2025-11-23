@@ -126,22 +126,21 @@ async def generate_tts_files(pdf_hash: bytes, hash_hex: str):
             task = tts(description, hash_hex, step)
             tts_tasks.append((step, task))
 
-    # Execute all TTS tasks in parallel
+    # Execute all TTS tasks sequentially (not in parallel) to avoid API rate limiting
     if tts_tasks:
         print(f"  Generating {len(tts_tasks)} new TTS files (skipped {skipped_count} existing)...")
-        tts_results = await asyncio.gather(*[task for _, task in tts_tasks], return_exceptions=True)
-
-        # Update database with MP3 filenames
         generated_count = 0
-        for (step, _), result in zip(tts_tasks, tts_results):
-            if isinstance(result, Exception):
-                print(f"  Step {step}: Failed - {result}")
-            elif result:
-                update_mp3_filename(pdf_hash, step, result)
-                print(f"  Step {step}: {result}")
-                generated_count += 1
-            else:
-                print(f"  Step {step}: No MP3 generated")
+        for step, task in tts_tasks:
+            try:
+                result = await task
+                if result:
+                    update_mp3_filename(pdf_hash, step, result)
+                    print(f"  Step {step}: {result}")
+                    generated_count += 1
+                else:
+                    print(f"  Step {step}: No MP3 generated")
+            except Exception as e:
+                print(f"  Step {step}: Failed - {e}")
     else:
         generated_count = 0
         print(f"  All {skipped_count} TTS files already exist, no generation needed")
