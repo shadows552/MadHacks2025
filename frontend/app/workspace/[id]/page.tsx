@@ -371,8 +371,80 @@ export default function Workspace({ params }: WorkspaceProps) {
       {/* MAIN SPLIT VIEW */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
 
-        {/* LEFT PANEL: PDF VIEWER */}
-        <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-zinc-700 relative flex flex-col h-1/2 md:h-full">
+        {/* LEFT PANEL: 3D VIEWER */}
+        <div className="w-full md:w-[60%] bg-black relative h-1/2 md:h-full order-2 md:order-1">
+
+          <div className="absolute inset-0 z-0">
+            <AssemblyScene modelUrl={activeStepData.modelUrl} />
+          </div>
+
+          {/* SUBTITLES */}
+          {isPlaying && (
+            <div className="absolute bottom-8 left-8 right-8 z-20 flex justify-start pointer-events-none">
+               <div className="glass-navbar light-glass-navbar p-4 md:p-6 rounded-4xl shadow-2xl max-w-xl animate-in fade-in slide-in-from-bottom-4 duration-500 pointer-events-auto">
+                  <div className="flex items-center gap-3 mb-2">
+                     <span className="text-xs font-bold text-indigo-400 animate-pulse uppercase tracking-wider">Dynamic Guide</span>
+                  </div>
+                  <p className="text-xs md:text-sm font-medium text-white leading-relaxed text-left">
+                    "{activeStepData.description}"
+                  </p>
+               </div>
+            </div>
+          )}
+
+          {/* CONTROLS */}
+          <div className='absolute bottom-8 right-8'>
+            <div className="glass-navbar light-glass-navbar rounded-full flex items-center gap-2 p-1 z-30">
+              <button
+                onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+                disabled={currentStep === 1}
+                className="group p-3 rounded-xl disabled:opacity-30 transition-all"
+              >
+                <ArrowLeft className="w-6 h-6 text-zinc-200 group-hover:text-indigo-400 transition-colors" />
+              </button>
+
+              <div className="flex flex-col items-center px-2">
+                <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Step</span>
+                <span className="text-xl font-bold text-white tabular-nums leading-none">{currentStep}</span>
+              </div>
+
+              <button
+                onClick={() => setCurrentStep(Math.min(totalSteps, currentStep + 1))}
+                disabled={currentStep === totalSteps}
+                className="group p-3 rounded-xl disabled:opacity-30 transition-all"
+              >
+                <ArrowRight className="w-6 h-6 text-indigo-400 group-hover:text-indigo-300 transition-all" />
+              </button>
+            </div>
+          </div>
+
+
+          <div className="absolute top-6 right-6 flex gap-2 z-30">
+             <button
+               onClick={() => {
+                 if (audioRef.current) {
+                   audioRef.current.currentTime = 0;
+                   audioRef.current.play();
+                 }
+               }}
+               className="glass-navbar light-glass-navbar p-2 hover:bg-indigo-600/20 rounded-full text-zinc-300 hover:text-white transition-all"
+               title="Replay audio"
+             >
+               <RotateCcw className="w-5 h-5" />
+             </button>
+             <button
+               onClick={() => setIsMuted(!isMuted)}
+               className="glass-navbar light-glass-navbar p-2 hover:bg-indigo-600/20 rounded-full text-zinc-300 hover:text-white transition-all"
+               title={isMuted ? "Unmute audio" : "Mute audio"}
+             >
+               {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+             </button>
+          </div>
+
+        </div>
+
+        {/* RIGHT PANEL: PDF VIEWER */}
+        <div className="w-full md:w-[40%] border-b md:border-b-0 md:border-l border-zinc-700 relative flex flex-col h-1/2 md:h-full order-1 md:order-2">
            {/* Glass navbar overlaying PDF */}
            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 w-[calc(100%-4rem)] max-w-lg pointer-events-none">
              <div className="glass-navbar dark-glass-navbar rounded-full h-12 flex items-center justify-between px-5 pointer-events-auto">
@@ -420,78 +492,6 @@ export default function Workspace({ params }: WorkspaceProps) {
                 </Document>
               </div>
            </div>
-        </div>
-
-        {/* RIGHT PANEL: DYNAMIC 3D SCENE */}
-        <div className="w-full md:w-1/2 bg-black relative h-1/2 md:h-full">
-
-          <div className="absolute inset-0 z-0">
-            <AssemblyScene modelUrl={activeStepData.modelUrl} />
-          </div>
-
-          {/* SUBTITLES */}
-          {isPlaying && (
-            <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-20 w-full flex justify-center pointer-events-none">
-               <div className="glass-navbar light-glass-navbar p-4 md:p-6 rounded-4xl shadow-2xl max-w-xl animate-in fade-in slide-in-from-bottom-4 duration-500 pointer-events-auto">
-                  <div className="flex items-center gap-3 mb-2">
-                     <span className="text-xs font-bold text-indigo-400 animate-pulse uppercase tracking-wider">Dynamic Guide</span>
-                  </div>
-                  <p className="text-xs md:text-sm font-medium text-white leading-relaxed text-center">
-                    "{activeStepData.description}"
-                  </p>
-               </div>
-            </div>
-          )}
-
-          {/* CONTROLS */}
-          <div className='absolute bottom-8 right-8'>
-            <div className="glass-navbar light-glass-navbar rounded-full flex items-center gap-2 p-1 z-30">
-              <button
-                onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-                disabled={currentStep === 1}
-                className="group p-3 rounded-xl disabled:opacity-30 transition-all"
-              >
-                <ArrowLeft className="w-6 h-6 text-zinc-200 group-hover:text-indigo-400 transition-colors" />
-              </button>
-
-              <div className="flex flex-col items-center px-4">
-                <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Step</span>
-                <span className="text-xl font-bold text-white tabular-nums leading-none">{currentStep}</span>
-              </div>
-
-              <button
-                onClick={() => setCurrentStep(Math.min(totalSteps, currentStep + 1))}
-                disabled={currentStep === totalSteps}
-                className="group p-3 rounded-xl disabled:opacity-30 transition-all"
-              >
-                <ArrowRight className="w-6 h-6 text-indigo-400 group-hover:text-indigo-300 transition-all" />
-              </button>
-            </div>
-          </div>
-
-
-          <div className="absolute top-6 right-6 flex gap-2 z-30">
-             <button
-               onClick={() => {
-                 if (audioRef.current) {
-                   audioRef.current.currentTime = 0;
-                   audioRef.current.play();
-                 }
-               }}
-               className="glass-navbar light-glass-navbar p-2 hover:bg-indigo-600/20 rounded-full text-zinc-300 hover:text-white transition-all"
-               title="Replay audio"
-             >
-               <RotateCcw className="w-5 h-5" />
-             </button>
-             <button
-               onClick={() => setIsMuted(!isMuted)}
-               className="glass-navbar light-glass-navbar p-2 hover:bg-indigo-600/20 rounded-full text-zinc-300 hover:text-white transition-all"
-               title={isMuted ? "Unmute audio" : "Mute audio"}
-             >
-               {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-             </button>
-          </div>
-
         </div>
       </div>
     </div>
