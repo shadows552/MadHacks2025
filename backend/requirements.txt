@@ -3,6 +3,7 @@ annotated-types==0.7.0
 cachetools==6.2.2
 certifi==2025.11.12
 charset-normalizer==3.4.4
+fastapi==0.115.6
 google-ai-generativelanguage==0.6.15
 google-api-core==2.28.1
 google-api-python-client==2.187.0
@@ -24,6 +25,7 @@ pydantic_core==2.41.5
 PyMuPDF==1.26.6
 pyparsing==3.2.5
 python-dotenv==1.0.1
+python-multipart==0.0.20
 requests==2.32.5
 rsa==4.9.1
 tqdm==4.67.1
@@ -32,3 +34,4 @@ typing-inspection==0.4.2
 typing_extensions==4.15.0
 uritemplate==4.2.0
 urllib3==2.5.0
+uvicorn==0.34.0

@@ -23,8 +23,8 @@ COPY . .
 # Create volume directory if it doesn't exist
 RUN mkdir -p /app/volume
 
-# Expose port (for future API endpoints)
+# Expose port for FastAPI server
 EXPOSE 8000
 
-# Run the main application
-CMD ["python", "main.py"]
+# Run the FastAPI server with uvicorn
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
