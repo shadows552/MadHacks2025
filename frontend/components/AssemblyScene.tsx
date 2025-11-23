@@ -35,8 +35,8 @@ interface CameraHandlerProps {
 function CameraHandler({ url }: CameraHandlerProps) {
   const { camera, controls } = useThree();
   useEffect(() => {
-    // Reset camera position to front-on view when model changes
-    camera.position.set(0, 1, 8);
+    // Reset camera position to front-on view when model changes (less zoomed in)
+    camera.position.set(0, 0.5, 12);
     camera.lookAt(0, 0, 0);
 
     // Reset controls target if OrbitControls are being used
@@ -56,21 +56,21 @@ interface AssemblySceneProps {
 export default function AssemblyScene({ modelUrl }: AssemblySceneProps) {
   return (
     <div className="w-full h-full bg-zinc-900">
-      <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1, 8], fov: 50 }}>
-        
+      <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0.5, 12], fov: 50 }}>
+
         <Suspense fallback={<Loader />}>
           {/* 2. FIX: Remove 'environment="forest"' from Stage.
             This prevents Stage from triggering the load during its render cycle.
           */}
-          <Stage 
-            intensity={0} 
-            adjustCamera={1.2}
+          <Stage
+            intensity={0}
+            adjustCamera={false}
           >
             {modelUrl && <Model key={modelUrl} url={modelUrl} />}
           </Stage>
 
           {/* 3. FIX: Add Environment explicitly as a sibling.
-            This allows React to handle the environment loading independently 
+            This allows React to handle the environment loading independently
             of the Stage's internal render logic.
           */}
           <Environment preset="forest" />
@@ -78,7 +78,7 @@ export default function AssemblyScene({ modelUrl }: AssemblySceneProps) {
 
         <OrbitControls makeDefault />
         <CameraHandler url={modelUrl} />
-        
+
       </Canvas>
     </div>
   );
