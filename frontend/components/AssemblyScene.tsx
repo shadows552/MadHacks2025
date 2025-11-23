@@ -64,7 +64,7 @@ export default function AssemblyScene({ modelUrl }: AssemblySceneProps) {
           */}
           <Stage
             intensity={0}
-            adjustCamera={false}
+            adjustCamera={true}
           >
             {modelUrl && <Model key={modelUrl} url={modelUrl} />}
           </Stage>

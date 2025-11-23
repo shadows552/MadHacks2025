@@ -495,6 +495,7 @@ async def get_glb(hash: str, step: int):
 async def get_mp3(hash: str, step: int):
     """
     Get the audio (MP3) file for a specific step.
+    If the MP3 file is not found, it will be automatically regenerated.
 
     Args:
         hash: First 16 characters of the PDF hash
@@ -502,19 +503,47 @@ async def get_mp3(hash: str, step: int):
     """
     try:
         file_info = get_file_info_by_hash_step(hash, step)
-        if not file_info or not file_info['mp3_filename']:
-            raise HTTPException(status_code=404, detail=f"MP3 not found for hash {hash}, step {step}")
+        if not file_info:
+            raise HTTPException(status_code=404, detail=f"No data found for hash {hash}, step {step}")
 
         volume_dir = Path("volume")
-        mp3_path = volume_dir / file_info['mp3_filename']
 
-        if not mp3_path.exists():
-            raise HTTPException(status_code=404, detail=f"MP3 file {file_info['mp3_filename']} not found on disk")
+        # Check if MP3 exists, if not regenerate it
+        mp3_filename = file_info.get('mp3_filename')
+        mp3_path = volume_dir / mp3_filename if mp3_filename else None
+
+        if not mp3_filename or not mp3_path or not mp3_path.exists():
+            # MP3 is missing, regenerate it
+            print(f"MP3 not found for hash {hash}, step {step}. Regenerating...")
+
+            # Get instruction text from the instruction file
+            instruction_filename = file_info.get('instruction_filename')
+            if not instruction_filename:
+                raise HTTPException(status_code=404, detail=f"No instruction file found for hash {hash}, step {step}")
+
+            instruction_path = volume_dir / instruction_filename
+            if not instruction_path.exists():
+                raise HTTPException(status_code=404, detail=f"Instruction file {instruction_filename} not found on disk")
+
+            # Read instruction text
+            with open(instruction_path, "r", encoding="utf-8") as f:
+                instruction_text = f.read().strip()
+
+            # Generate MP3 using TTS
+            mp3_filename = await tts(instruction_text, hash, step, output_dir="volume")
+
+            # Update database with new MP3 filename
+            # Convert hash hex to bytes for database update
+            hash_bytes = bytes.fromhex(hash + "0" * (64 - len(hash)))  # Pad to full hash length
+            update_mp3_filename(hash_bytes, step, mp3_filename)
+
+            mp3_path = volume_dir / mp3_filename
+            print(f"MP3 regenerated successfully: {mp3_filename}")
 
         return FileResponse(
             path=str(mp3_path),
             media_type="audio/mpeg",
-            filename=file_info['mp3_filename']
+            filename=mp3_filename
         )
     except HTTPException:
         raise

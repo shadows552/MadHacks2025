@@ -104,7 +104,7 @@ export default function Workspace({ params }: WorkspaceProps) {
 
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [leftPanelWidth, setLeftPanelWidth] = useState<number>(66.66); // 2/3 in percentage
+  const [leftPanelWidth, setLeftPanelWidth] = useState<number>(60); // 60% for 3D viewer, 40% for PDF viewer
   const [isResizing, setIsResizing] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
