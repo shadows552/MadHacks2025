@@ -6,6 +6,7 @@ backend/venv/
 backend/.venv/
 .env
 backend/.env
+backend/secret.py
 /.tmp/
 output/*
 backend/volume/*
