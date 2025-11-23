@@ -11,48 +11,35 @@ import {
   MoreHorizontal, 
   Plus
 } from 'lucide-react';
+import timeAgo from '@/utils/timeAgo';
 
 export default function Dashboard() {
   const [isUploading, setIsUploading] = useState(false);
-  
   // Mock Data: Added 'status' to simulate a real backend processing state
   const [projects, setProjects] = useState([
     { 
-      id: '1', 
-      title: 'Sandsberg Table Instructions', 
-      date: 'Edited 2 mins ago', 
+      id: '1',  //change to hash of pdf
+      title: 'Sandsberg Table Instructions', //pdf name 
+      date: '2025-11-12T00:00:00Z', // ISO format for easier parsing
       status: 'Ready',
       thumbnail: 'bg-orange-100' // Using colored divs instead of images for clean demo
     },
-    { 
-      id: '2', 
-      title: 'Lego Technic 42115', 
-      date: 'Edited yesterday', 
-      status: 'Processing',
-      thumbnail: 'bg-blue-100' 
-    },
-    { 
-      id: '3', 
-      title: 'Herman Miller Aeron', 
-      date: 'Edited 3 days ago', 
-      status: 'Ready',
-      thumbnail: 'bg-zinc-800' 
-    },
   ]);
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
 
     setIsUploading(true);
-    
     // Simulate upload & AI processing time
     setTimeout(() => {
       setIsUploading(false);
       const newProject = {
         id: Math.random().toString(),
         title: file.name.replace('.pdf', ''),
-        date: 'Just now',
+        date: new Date().toISOString(),
         status: 'Ready',
         thumbnail: 'bg-indigo-100'
       };
@@ -83,25 +70,14 @@ export default function Dashboard() {
         {/* 2. HERO SECTION: Value Prop */}
         <div className="mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-3 tracking-tight">
-            Turn static PDFs into <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">interactive 3D guides</span>.
+            Turn static PDFs into <span 
+              className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600 selection:text-indigo-700">
+              interactive 3D guides
+            </span>.
           </h1>
           <p className="text-lg text-zinc-500 max-w-2xl">
             Upload your assembly manuals. Our AI parses instructions, generates 3D models, and creates voice-guided walkthroughs instantly.
           </p>
-        </div>
-
-        {/* 3. ACTIONS BAR: Search and Filter */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div className="relative w-full md:w-96 group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-indigo-500 transition-colors" />
-            <input 
-              type="text" 
-              placeholder="Search manuals..." 
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
-            />
-          </div>
-          {/* We incorporate the upload button into the grid below for a cleaner look, 
-              or keep a primary action here if preferred. */}
         </div>
 
         {/* 4. CONTENT GRID */}
@@ -169,7 +145,7 @@ export default function Dashboard() {
                   </div>
                   
                   <p className="text-xs text-zinc-500 mt-auto pt-4 border-t border-zinc-100 flex items-center justify-between">
-                    <span>{project.date}</span>
+                    <span>{timeAgo(project.date)}</span>
                     <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-indigo-500 transition-transform group-hover:translate-x-1" />
                   </p>
                 </div>

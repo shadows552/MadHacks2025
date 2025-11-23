@@ -14,7 +14,6 @@ services:
       - ./backend/.env
     environment:
       - PYTHONUNBUFFERED=1
-    restart: unless-stopped
     networks:
       - 3docs-network
 
@@ -29,7 +28,6 @@ services:
       - NODE_ENV=production
     depends_on:
       - backend
-    restart: unless-stopped
     networks:
       - 3docs-network
 
