@@ -151,6 +151,37 @@ async def generate_tts_files(pdf_hash: bytes, hash_hex: str):
     return total_count
 
 
+async def regenerate_single_tts(hash_hex: str, step: int, instruction_filename: str) -> str:
+    """
+    Regenerate TTS file for a single step using the same logic as generate_tts_files.
+
+    Args:
+        hash_hex: First 16 characters of the PDF hash
+        step: Step number
+        instruction_filename: Name of the instruction text file
+
+    Returns:
+        Generated MP3 filename
+    """
+    volume_dir = Path("volume")
+
+    # Read the instruction file
+    instruction_path = volume_dir / instruction_filename
+
+    with open(instruction_path, "r", encoding="utf-8") as f:
+        content = f.read().strip()
+
+    # Split into title and description (separated by \n\n)
+    parts = content.split("\n\n", 1)
+    description = parts[1] if len(parts) > 1 else parts[0]
+
+    # Generate TTS (same logic as generate_tts_files)
+    mp3_filename = await tts(description, hash_hex, step)
+
+    print(f"  Step {step}: {mp3_filename}")
+    return mp3_filename
+
+
 async def generate_3d_models(pdf_hash: bytes, hash_hex: str):
     """Generate 3D models for all instructional images."""
     volume_dir = Path("volume")
@@ -526,12 +557,8 @@ async def get_mp3(hash: str, step: int):
             if not instruction_path.exists():
                 raise HTTPException(status_code=404, detail=f"Instruction file {instruction_filename} not found on disk")
 
-            # Read instruction text
-            with open(instruction_path, "r", encoding="utf-8") as f:
-                instruction_text = f.read().strip()
-
-            # Generate MP3 using TTS
-            mp3_filename = await tts(instruction_text, hash, step, output_dir="volume")
+            # Regenerate MP3 using the same logic as generate_tts_files
+            mp3_filename = await regenerate_single_tts(hash, step, instruction_filename)
 
             # Update database with new MP3 filename
             update_mp3_filename_by_hash_hex(hash, step, mp3_filename)
@@ -547,6 +574,7 @@ async def get_mp3(hash: str, step: int):
     except HTTPException:
         raise
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Failed to retrieve MP3: {str(e)}")
 
 

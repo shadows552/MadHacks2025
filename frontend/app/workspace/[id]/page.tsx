@@ -344,13 +344,13 @@ export default function Workspace({ params }: WorkspaceProps) {
 
           {/* SUBTITLES */}
           {isPlaying && (
-            <div className="absolute bottom-20 left-8 right-8 z-20 flex justify-center pointer-events-none">
+            <div className="absolute bottom-8 left-8 right-8 z-20 flex justify-start pointer-events-none">
                <div className="bg-black/20 backdrop-blur-md border border-white/10 p-4 md:p-6 rounded-2xl shadow-2xl max-w-xl animate-in fade-in slide-in-from-bottom-4 duration-500 pointer-events-auto">
                   <div className="flex items-center gap-3 mb-2">
                      <Volume2 className="w-4 h-4 text-indigo-400 animate-pulse" />
                      <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider">Voice Guide</span>
                   </div>
-                  <p className="text-base md:text-lg font-medium text-white/80 leading-relaxed text-center">
+                  <p className="text-sm md:text-base font-medium text-white/60 leading-relaxed text-left">
                     "{activeStepData.description}"
                   </p>
                </div>
