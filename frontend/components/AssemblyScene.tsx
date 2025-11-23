@@ -35,8 +35,8 @@ interface CameraHandlerProps {
 function CameraHandler({ url }: CameraHandlerProps) {
   const { camera, controls } = useThree();
   useEffect(() => {
-    // Reset camera position to front-on view when model changes (less zoomed in)
-    camera.position.set(0, 0.5, 12);
+    // Reset camera position to isometric view when model changes
+    camera.position.set(8, 8, 8);
     camera.lookAt(0, 0, 0);
 
     // Reset controls target if OrbitControls are being used
@@ -56,7 +56,7 @@ interface AssemblySceneProps {
 export default function AssemblyScene({ modelUrl }: AssemblySceneProps) {
   return (
     <div className="w-full h-full bg-zinc-900">
-      <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0.5, 12], fov: 50 }}>
+      <Canvas shadows dpr={[1, 2]} camera={{ position: [8, 8, 8], fov: 50 }}>
 
         <Suspense fallback={<Loader />}>
           {/* 2. FIX: Remove 'environment="forest"' from Stage.
