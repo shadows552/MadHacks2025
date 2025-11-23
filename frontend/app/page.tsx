@@ -97,7 +97,7 @@ export default function Dashboard() {
           <div className="bg-indigo-600 p-1.5 rounded-lg">
             <Box className="w-5 h-5 text-white" />
           </div>
-          <span className="font-bold text-lg tracking-tight text-zinc-800">ManualAI</span>
+          <span className="font-bold text-lg tracking-tight text-zinc-800">3Docs</span>
         </div>
       </nav>
 
