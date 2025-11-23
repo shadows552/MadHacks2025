@@ -1,4 +1,5 @@
-"use client";
+"use client"
+
 import React, { useState, useEffect, use, useRef } from 'react';
 import Link from 'next/link';
 import {
@@ -6,9 +7,10 @@ import {
   ArrowRight,
   ChevronRight,
   Box,
-  PlayCircle,
+  RotateCcw,
   FileText,
   Volume2,
+  VolumeX,
   Loader2
 } from 'lucide-react';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -104,13 +106,19 @@ export default function Workspace({ params }: WorkspaceProps) {
 
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+<<<<<<< Updated upstream
   const [leftPanelWidth, setLeftPanelWidth] = useState<number>(60); // 60% for 3D viewer, 40% for PDF viewer
+=======
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [leftPanelWidth, setLeftPanelWidth] = useState<number>(66.66); // 2/3 in percentage
+>>>>>>> Stashed changes
   const [isResizing, setIsResizing] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // PDF viewer state
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pdfWidth, setPdfWidth] = useState<number>(600);
+  const [currentPdfPage, setCurrentPdfPage] = useState<number>(1);
   const pdfContainerRef = React.useRef<HTMLDivElement>(null);
 
   // Update PDF width based on container size
@@ -195,6 +203,7 @@ export default function Workspace({ params }: WorkspaceProps) {
 
     const audio = new Audio(activeStepData.audioUrl);
     audioRef.current = audio;
+    audio.muted = isMuted;
 
     audio.onplay = () => setIsPlaying(true);
     audio.onended = () => setIsPlaying(false);
@@ -213,10 +222,47 @@ export default function Workspace({ params }: WorkspaceProps) {
       audio.pause();
       audioRef.current = null;
     };
-  }, [currentStep, activeStepData]);
+  }, [currentStep, activeStepData, isMuted]);
+
+  // --- MUTE CONTROL ---
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
 
   // Refs for PDF pages (for scrolling)
   const pageRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // --- TRACK CURRENT PDF PAGE ---
+  useEffect(() => {
+    if (!pdfContainerRef.current || !numPages) return;
+
+    const options = {
+      root: pdfContainerRef.current,
+      rootMargin: '-10% 0px -90% 0px', // Track page in top 10% of viewport
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const pageIndex = parseInt(entry.target.getAttribute('data-page-index') || '0');
+          setCurrentPdfPage(pageIndex + 1); // Convert to 1-indexed
+        }
+      });
+    }, options);
+
+    // Observe all pages
+    pageRefs.current.forEach((pageEl, index) => {
+      if (pageEl) {
+        pageEl.setAttribute('data-page-index', index.toString());
+        observer.observe(pageEl);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, [numPages, pageRefs]);
 
   // --- PDF AUTO-SCROLL ---
   useEffect(() => {
@@ -313,10 +359,6 @@ export default function Workspace({ params }: WorkspaceProps) {
       {/* HEADER */}
       <header className="h-14 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-4 shrink-0 z-20">
         <div className="flex items-center gap-3">
-          <Link href="/" className="p-2 hover:bg-zinc-800 rounded-lg transition-colors text-zinc-400 hover:text-white">
-            <Box className="w-5 h-5" />
-          </Link>
-          <div className="h-4 w-[1px] bg-zinc-700 mx-1" />
           <nav className="flex items-center gap-2 text-sm">
             <Link href="/" className="text-zinc-400 hover:text-zinc-200 transition-colors">
               Dashboard
@@ -331,6 +373,7 @@ export default function Workspace({ params }: WorkspaceProps) {
       </header>
 
       {/* MAIN SPLIT VIEW */}
+<<<<<<< Updated upstream
       <div ref={containerRef} className="flex-1 flex flex-col md:flex-row overflow-hidden">
 
         {/* LEFT PANEL: 3D VIEWER */}
@@ -413,6 +456,23 @@ export default function Workspace({ params }: WorkspaceProps) {
               <span className="text-xs bg-black/30 px-2 py-1 rounded text-zinc-300">
                 Step {currentStep} of {totalSteps}
               </span>
+=======
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        
+        {/* LEFT PANEL: PDF VIEWER */}
+        <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-zinc-700 relative flex flex-col h-1/2 md:h-full">
+           {/* Glass navbar overlaying PDF */}
+           <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 w-[calc(100%-4rem)] max-w-lg pointer-events-none">
+             <div className="glass-navbar dark-glass-navbar rounded-full h-12 flex items-center justify-between px-5 pointer-events-auto">
+               <span className="text-xs font-medium text-black flex items-center gap-2">
+                 <FileText className="w-4 h-4" />
+                 {manualData.productName}
+               </span>
+               <span className="text-xs px-3 py-1.5 rounded-full text-black font-medium">
+                 Page {currentPdfPage} of {numPages}
+               </span>
+             </div>
+>>>>>>> Stashed changes
            </div>
 
            {/* PDF VIEWER CONTAINER */}
@@ -450,6 +510,81 @@ export default function Workspace({ params }: WorkspaceProps) {
               </div>
            </div>
         </div>
+<<<<<<< Updated upstream
+=======
+
+        {/* RIGHT PANEL: DYNAMIC 3D SCENE */}
+        <div className="w-full md:w-1/2 bg-black relative h-1/2 md:h-full">
+          
+          <div className="absolute inset-0 z-0">
+            <AssemblyScene modelUrl={activeStepData.modelUrl} />
+          </div>
+
+          {/* SUBTITLES */}
+          {isPlaying && (
+            <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-20 w-full flex justify-center pointer-events-none">
+               <div className="glass-navbar light-glass-navbar p-4 md:p-6 rounded-4xl shadow-2xl max-w-xl animate-in fade-in slide-in-from-bottom-4 duration-500 pointer-events-auto">
+                  <div className="flex items-center gap-3 mb-2">
+                     <span className="text-xs font-bold text-indigo-400 animate-pulse uppercase tracking-wider">Dynamic Guide</span>
+                  </div>
+                  <p className="text-xs md:text-sm font-medium text-white leading-relaxed text-center">
+                    "{activeStepData.description}"
+                  </p>
+               </div>
+            </div>
+          )}
+
+          {/* CONTROLS */}
+          <div className='absolute bottom-8 right-8'>
+            <div className="glass-navbar light-glass-navbar rounded-full flex items-center gap-2 p-1 z-30">
+              <button
+                onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+                disabled={currentStep === 1}
+                className="group p-3 rounded-xl disabled:opacity-30 transition-all"
+              >
+                <ArrowLeft className="w-6 h-6 text-zinc-200 group-hover:text-indigo-400 transition-colors" />
+              </button>
+
+              <div className="flex flex-col items-center px-4">
+                <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Step</span>
+                <span className="text-xl font-bold text-white tabular-nums leading-none">{currentStep}</span>
+              </div>
+
+              <button
+                onClick={() => setCurrentStep(Math.min(totalSteps, currentStep + 1))}
+                disabled={currentStep === totalSteps}
+                className="group p-3 rounded-xl disabled:opacity-30 transition-all"
+              >
+                <ArrowRight className="w-6 h-6 text-indigo-400 group-hover:text-indigo-300 transition-all" />
+              </button>
+            </div>
+          </div>
+          
+
+          <div className="absolute top-6 right-6 flex gap-2 z-30">
+             <button
+               onClick={() => {
+                 if (audioRef.current) {
+                   audioRef.current.currentTime = 0;
+                   audioRef.current.play();
+                 }
+               }}
+               className="glass-navbar light-glass-navbar p-2 hover:bg-indigo-600/20 rounded-full text-zinc-300 hover:text-white transition-all"
+               title="Replay audio"
+             >
+               <RotateCcw className="w-5 h-5" />
+             </button>
+             <button
+               onClick={() => setIsMuted(!isMuted)}
+               className="glass-navbar light-glass-navbar p-2 hover:bg-indigo-600/20 rounded-full text-zinc-300 hover:text-white transition-all"
+               title={isMuted ? "Unmute audio" : "Mute audio"}
+             >
+               {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+             </button>
+          </div>
+
+        </div>
+>>>>>>> Stashed changes
       </div>
     </div>
   );
