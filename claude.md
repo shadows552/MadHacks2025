@@ -9,10 +9,13 @@
 The application consists of two main components:
 
 ### Backend (Python)
-- **Framework**: Python-based processing pipeline
+- **Framework**: FastAPI REST API server with async processing pipeline
+- **Server**: Always-running server.py with on-demand PDF processing
 - **AI Integration**: Google Gemini AI for image analysis and instruction extraction
 - **3D Generation**: Tripo3D API for generating 3D models
+- **Text-to-Speech**: Fish Audio API for generating audio instructions
 - **PDF Processing**: PyMuPDF for extracting images and text from manuals
+- **Database**: SQLite for storing instruction metadata
 - **Location**: `/backend`
 
 ### Frontend (Next.js)
@@ -26,15 +29,22 @@ The application consists of two main components:
 ```
 MadHacks2025/
 ├── backend/
-│   ├── main.py              # Main processing pipeline
-│   ├── preprocessing.py     # PDF extraction logic
-│   ├── gemini_service.py    # Gemini AI integration
-│   ├── tripo.py            # Tripo3D API integration
-│   ├── tts.py              # Text-to-speech functionality
-│   ├── database.py         # Database operations
-│   ├── requirements.txt    # Python dependencies
-│   ├── .env.example        # Environment variables template
-│   └── volume/             # PDF storage and processed files
+│   ├── server.py           # FastAPI REST API server (main entry point)
+│   ├── main.py             # Processing pipeline (can run standalone)
+│   ├── preprocessing.py    # PDF extraction logic
+│   ├── gemini_service.py   # Gemini AI integration
+│   ├── tripo.py           # Tripo3D API integration
+│   ├── tts.py             # Text-to-speech functionality (Fish Audio)
+│   ├── database.py        # SQLite database operations
+│   ├── requirements.txt   # Python dependencies
+│   ├── Dockerfile         # Backend container configuration
+│   ├── .env.example       # Environment variables template
+│   └── volume/            # PDF storage and processed files
+│       ├── instructions.db   # SQLite database
+│       ├── *.pdf            # Input PDFs
+│       ├── *.mp3            # Generated audio files
+│       ├── *.glb            # Generated 3D models
+│       └── *.txt            # Extracted instructions
 ├── frontend/
 │   ├── app/                # Next.js app directory
 │   ├── public/             # Static assets
@@ -53,12 +63,16 @@ MadHacks2025/
 ## Technology Stack
 
 ### Backend Dependencies
+- `fastapi`: Modern web framework for building APIs
+- `uvicorn`: ASGI server for running FastAPI
 - `google-generativeai`: Gemini AI integration
 - `PyMuPDF`: PDF processing
 - `tripo3d`: 3D model generation
+- `aiohttp`: Async HTTP client for Fish Audio TTS API
 - `python-dotenv`: Environment configuration
+- `python-multipart`: File upload support
 - `Pillow`: Image processing
-- `requests`: HTTP client
+- `pydantic`: Data validation
 
 ### Frontend Dependencies
 - `next`: React framework
@@ -82,6 +96,7 @@ cp backend/.env.example backend/.env
 2. Configure API keys in `backend/.env`:
    - `GEMINI_API_KEY`: Get from [Google AI Studio](https://makersuite.google.com/app/apikey)
    - `TRIPO_API_KEY`: Get from [Tripo3D Platform](https://platform.tripo3d.ai/)
+   - `FISH_AUDIO_API_KEY`: Get from [Fish Audio](https://fish.audio/)
 
 ### Running with Docker (Recommended)
 
@@ -95,11 +110,22 @@ docker-compose up --build
 
 ### Running Locally
 
-#### Backend
+#### Backend (Server Mode - Recommended)
 ```bash
 cd backend
 pip install -r requirements.txt
-python main.py
+uvicorn server:app --host 0.0.0.0 --port 8000 --reload
+```
+
+#### Backend (Standalone Mode - for testing)
+```bash
+cd backend
+pip install -r requirements.txt
+# Process a specific PDF with custom options
+python main.py --pdf test.pdf --voice-id zh_CN-female-1
+# Skip TTS or 3D generation
+python main.py --pdf myfile.pdf --no-tts
+python main.py --pdf myfile.pdf --no-3d
 ```
 
 #### Frontend
@@ -112,19 +138,91 @@ npm run dev
 ## Development Workflow
 
 ### Backend Development
+
+#### Server-Based Workflow (Production)
+1. Start the FastAPI server: `uvicorn server:app --reload`
+2. The server provides REST API endpoints:
+   - `GET /` - Health check
+   - `GET /health` - Detailed health status
+   - `POST /process` - Process existing PDF in volume directory
+   - `POST /upload-and-process` - Upload and process PDF in one request
+3. Send requests to trigger on-demand processing
+
+#### Standalone Workflow (Testing)
 1. Place PDF manuals in `backend/volume/`
-2. The main pipeline (`main.py`) orchestrates:
+2. Run `python main.py --pdf <filename>` to process
+3. The pipeline orchestrates:
    - PDF extraction (`preprocessing.py`)
    - AI analysis (`gemini_service.py`)
-   - 3D generation (`tripo.py`)
-3. Results are processed and stored for frontend consumption
+   - TTS generation (`tts.py`)
+   - 3D model generation (`tripo.py`)
+   - Database storage (`database.py`)
+4. Results are stored in database and volume directory
 
 ### Frontend Development
 - Use `npm run dev` for hot-reload development
 - Build for production: `npm run build`
 - Start production server: `npm start`
 
-## API Integration
+## Backend API Endpoints
+
+### Health Checks
+- `GET /` - Basic health check, returns service status
+- `GET /health` - Detailed health check with database and volume status
+
+### PDF Processing
+#### `POST /process`
+Process a PDF file already in the volume directory.
+
+**Request Body:**
+```json
+{
+  "pdf_filename": "test.pdf",
+  "voice_id": "zh_CN-female-1",
+  "generate_tts": true,
+  "generate_3d": true
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Successfully processed test.pdf",
+  "pdf_hash": "a1b2c3d4e5f6g7h8",
+  "steps_processed": 5,
+  "tts_files_generated": 5,
+  "models_generated": 5
+}
+```
+
+#### `POST /upload-and-process`
+Upload a PDF file and process it immediately.
+
+**Form Data:**
+- `file`: PDF file (required)
+- `voice_id`: Voice ID for TTS (default: "zh_CN-female-1")
+- `generate_tts`: Whether to generate TTS (default: true)
+- `generate_3d`: Whether to generate 3D models (default: true)
+
+**Response:** Same as `/process` endpoint
+
+### Example Usage
+```bash
+# Process existing PDF
+curl -X POST http://localhost:8000/process \
+  -H "Content-Type: application/json" \
+  -d '{"pdf_filename": "test.pdf"}'
+
+# Upload and process new PDF
+curl -X POST http://localhost:8000/upload-and-process \
+  -F "file=@manual.pdf" \
+  -F "voice_id=zh_CN-female-1" \
+  -F "generate_tts=true" \
+  -F "generate_3d=true"
+```
+
+## External API Integration
 
 ### Gemini AI Service
 - Analyzes extracted images from manuals
@@ -134,6 +232,10 @@ npm run dev
 ### Tripo3D Service
 - Generates 3D models from instructional images
 - Provides interactive 3D visualizations for repair guides
+
+### Fish Audio TTS Service
+- Generates natural-sounding audio instructions
+- Supports multiple voice IDs and languages
 
 ## Docker Configuration
 

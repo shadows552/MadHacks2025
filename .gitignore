@@ -11,3 +11,4 @@ backend/secret.py
 output/*
 backend/volume/*
 .idea/
+frontend/package-lock.json
