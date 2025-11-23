@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDemoFiles, setShowDemoFiles] = useState(false);
 
   // Fetch PDFs from backend on component mount
   useEffect(() => {
@@ -59,25 +60,14 @@ export default function Dashboard() {
     setIsUploading(true);
     setError(null);
 
-    try {
-      // Upload and process the PDF
-      const result = await uploadAndProcessPDF(file, true, true);
-
-      // Add the new project to the list
-      const newProject: Project = {
-        id: result.pdf_hash,
-        title: file.name.replace('.pdf', ''),
-        stepCount: result.steps_processed,
-        thumbnailUrl: getImageUrl(result.pdf_hash, 0) // Use first image as thumbnail
-      };
-
-      setProjects([newProject, ...projects]);
-    } catch (err) {
-      console.error('Upload failed:', err);
-      setError(err instanceof Error ? err.message : 'Upload failed');
-    } finally {
+    // Demo mode: Simulate upload animation, then reveal demo files
+    setTimeout(() => {
       setIsUploading(false);
-    }
+      setShowDemoFiles(true);
+    }, 2000);
+
+    // Reset the file input so it can be used again
+    e.target.value = '';
   };
 
   return (
@@ -156,7 +146,7 @@ export default function Dashboard() {
           )}
 
           {/* PROJECT ITEMS */}
-          {!isLoading && projects.map((project) => (
+          {!isLoading && showDemoFiles && projects.map((project) => (
             <Link key={project.id} href={`/workspace/${project.id}`} className="group block">
               <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-200 transition-all duration-300 h-full flex flex-col">
 
