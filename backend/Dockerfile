@@ -1,5 +1,5 @@
 # Backend Dockerfile for 3Docs PDF Processing Service
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # Set working directory
 WORKDIR /app
