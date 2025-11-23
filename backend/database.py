@@ -15,13 +15,7 @@ def init_db():
             mp3_filename TEXT,
             instruction_filename TEXT,
             page_number INTEGER,
-            y_coordinate REAL,
-            bbox_x0 REAL,
-            bbox_y0 REAL,
-            bbox_x1 REAL,
-            bbox_y1 REAL,
-            bbox_width REAL,
-            bbox_height REAL,
+            y_percentage REAL,  -- Percentage (0-100%) from top of page
 
             PRIMARY KEY (hash, step)
         )
@@ -58,7 +52,7 @@ def store_gemini_results(
         pdf_filename: PDF filename (without volume/)
         image_filenames: List of all image filenames
         gemini_results: Results from Gemini processing
-        image_positions: Optional list of image position data with page_number, y_coordinate, bbox
+        image_positions: Optional list of image position data with page_number and y_percentage
 
     Returns:
         PDF hash as bytes
@@ -131,14 +125,8 @@ def store_gemini_results(
                 mp3_filename,
                 instruction_filename,
                 page_number,
-                y_coordinate,
-                bbox_x0,
-                bbox_y0,
-                bbox_x1,
-                bbox_y1,
-                bbox_width,
-                bbox_height
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                y_percentage
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             pdf_hash_bytes,
             pdf_filename,
@@ -148,13 +136,7 @@ def store_gemini_results(
             None,  # mp3 added later
             instruction_filename,
             position_data.get('page_number') if position_data else None,
-            position_data.get('y_coordinate') if position_data else None,
-            position_data['bbox'].get('x0') if position_data and position_data.get('bbox') else None,
-            position_data['bbox'].get('y0') if position_data and position_data.get('bbox') else None,
-            position_data['bbox'].get('x1') if position_data and position_data.get('bbox') else None,
-            position_data['bbox'].get('y1') if position_data and position_data.get('bbox') else None,
-            position_data['bbox'].get('width') if position_data and position_data.get('bbox') else None,
-            position_data['bbox'].get('height') if position_data and position_data.get('bbox') else None
+            position_data.get('y_percentage') if position_data else None
         ))
 
         step_number += 1
@@ -302,18 +284,17 @@ def get_file_info_by_hash_step(hash_hex: str, step: int) -> dict:
 
 def get_step_position(hash_hex: str, step: int) -> dict:
     """
-    Get page number and Y-coordinate for a specific step.
+    Get page number and Y-percentage for a specific step.
 
     Args:
         hash_hex: First 16 chars of PDF hash
         step: Step number
 
     Returns:
-        Dictionary with position data or None if not found
+        Dictionary with position data (page_number, y_percentage) or None if not found
     """
     cursor = con.execute(
-        '''SELECT page_number, y_coordinate, bbox_x0, bbox_y0, bbox_x1, bbox_y1,
-                  bbox_width, bbox_height
+        '''SELECT page_number, y_percentage
            FROM instructions WHERE hex(hash) LIKE ? AND step = ?''',
         (hash_hex.upper() + '%', step)
     )
@@ -323,13 +304,5 @@ def get_step_position(hash_hex: str, step: int) -> dict:
 
     return {
         'page_number': result[0],
-        'y_coordinate': result[1],
-        'bbox': {
-            'x0': result[2],
-            'y0': result[3],
-            'x1': result[4],
-            'y1': result[5],
-            'width': result[6],
-            'height': result[7]
-        }
+        'y_percentage': result[1]
     }

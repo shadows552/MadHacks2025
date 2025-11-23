@@ -1,0 +1,48 @@
+Page 1:
+Steps
+1.
+Use your fingertips to carefully spread apart the securing-clips on each end of the memory-module slot.
+2. Grasp the memory module near the securing clip, and then gently ease the memory module out of the memory-module slot.
+NOTE: Grasp the memory module near the securing clip, and then gently ease the memory module out of the memory-
+module slot.
+NOTE: If the memory module is difficult to remove, gently ease the memory module back and forth to remove it from 
+the slot.
+Installing the memory modules
+Prerequisites
+If you are replacing a component, remove the existing component before performing the installation procedure.
+About this task
+The following image indicates the location of the memory modules and provides a visual representation of the installation 
+procedure.
+32
+Removing and installing components
+
+
+Page 2:
+Steps
+1.
+Ensure that the securing clips are in an open position.
+2. Align the notch on the memory module with the tab on the memory-module slot.
+3. Insert the memory module into the memory-module connector until the memory module snaps into position and the securing 
+clip locks in place.
+NOTE: The securing clips return to the locked position. If you do not hear the click, remove the memory module and 
+reinstall it.
+NOTE: Repeat step 1 to step 3 when installing more than one memory module in your computer.
+Next steps
+1.
+Install the 2.5/3.5-inch hard-drive caddy.
+2. Install the side cover.
+3. Follow the procedure in after working inside your computer.
+Hard-drive and optical-drive bracket
+Removing the hard-drive and optical-drive bracket
+Prerequisites
+1.
+Follow the procedure in before working inside your computer.
+2. Remove the side cover.
+3. Remove the front bezel.
+4. Remove the 2.5/3.5-inch hard-drive caddy.
+About this task
+The following images indicate the location of the hard-drive and optical-drive bracket and provide a visual representation of the 
+removal procedure.
+Removing and installing components
+33
+

@@ -93,40 +93,61 @@ async def generate_tts_files(pdf_hash: bytes, hash_hex: str):
     volume_dir = Path("volume")
     rows = get_instructions_by_hash(pdf_hash)
 
-    # Create TTS tasks for parallel processing
+    print(f"\nGenerating TTS for {len(rows)} instructions...")
+
+    # Check which TTS files already exist and which need to be generated
     tts_tasks = []
+    skipped_count = 0
+
     for step, instruction_filename in rows:
-        # Read the instruction file
-        instruction_path = volume_dir / instruction_filename
+        # Check if MP3 file already exists
+        expected_mp3_filename = f"{hash_hex}-{step}.mp3"
+        mp3_path = volume_dir / expected_mp3_filename
 
-        with open(instruction_path, "r", encoding="utf-8") as f:
-            content = f.read().strip()
+        if mp3_path.exists():
+            # TTS already exists, just update database
+            update_mp3_filename(pdf_hash, step, expected_mp3_filename)
+            print(f"  Step {step}: Using existing TTS {expected_mp3_filename}")
+            skipped_count += 1
+        else:
+            # TTS doesn't exist, create generation task
+            # Read the instruction file
+            instruction_path = volume_dir / instruction_filename
 
-        # Split into title and description (separated by \n\n)
-        parts = content.split("\n\n", 1)
-        title, description = parts
+            with open(instruction_path, "r", encoding="utf-8") as f:
+                content = f.read().strip()
 
-        # Create async task
-        task = tts(description, hash_hex, step)
-        tts_tasks.append((step, task))
+            # Split into title and description (separated by \n\n)
+            parts = content.split("\n\n", 1)
+            description = parts[1] if len(parts) > 1 else parts[0]
+
+            # Create async task
+            task = tts(description, hash_hex, step)
+            tts_tasks.append((step, task))
 
     # Execute all TTS tasks in parallel
-    tts_results = await asyncio.gather(*[task for _, task in tts_tasks], return_exceptions=True)
+    if tts_tasks:
+        print(f"  Generating {len(tts_tasks)} new TTS files (skipped {skipped_count} existing)...")
+        tts_results = await asyncio.gather(*[task for _, task in tts_tasks], return_exceptions=True)
 
-    # Update database with MP3 filenames
-    generated_count = 0
-    for (step, _), result in zip(tts_tasks, tts_results):
-        if isinstance(result, Exception):
-            print(f"  Step {step}: Failed - {result}")
-        elif result:
-            update_mp3_filename(pdf_hash, step, result)
-            print(f"  Step {step}: {result}")
-            generated_count += 1
-        else:
-            print(f"  Step {step}: No MP3 generated")
+        # Update database with MP3 filenames
+        generated_count = 0
+        for (step, _), result in zip(tts_tasks, tts_results):
+            if isinstance(result, Exception):
+                print(f"  Step {step}: Failed - {result}")
+            elif result:
+                update_mp3_filename(pdf_hash, step, result)
+                print(f"  Step {step}: {result}")
+                generated_count += 1
+            else:
+                print(f"  Step {step}: No MP3 generated")
+    else:
+        generated_count = 0
+        print(f"  All {skipped_count} TTS files already exist, no generation needed")
 
-    print(f"TTS generation complete! Generated {generated_count}/{len(rows)} files")
-    return generated_count
+    total_count = generated_count + skipped_count
+    print(f"TTS generation complete! Generated {generated_count} new, reused {skipped_count} existing ({total_count} total)")
+    return total_count
 
 
 async def generate_3d_models(pdf_hash: bytes, hash_hex: str):
@@ -136,30 +157,49 @@ async def generate_3d_models(pdf_hash: bytes, hash_hex: str):
 
     print(f"\nGenerating 3D models for {len(image_rows)} instructions...")
 
-    # Create tasks for parallel processing
+    # Check which models already exist and which need to be generated
     tasks = []
+    skipped_count = 0
+
     for step, image_filename in image_rows:
-        image_path = volume_dir / image_filename
-        task = image_to_model(str(image_path), hash_hex, step)
-        tasks.append((step, task))
+        # Check if GLB file already exists
+        expected_glb_filename = f"{hash_hex}-{step}.glb"
+        glb_path = volume_dir / expected_glb_filename
 
-    # Execute all tasks in parallel
-    task_results = await asyncio.gather(*[task for _, task in tasks], return_exceptions=True)
-
-    # Update database with GLB filenames
-    generated_count = 0
-    for (step, _), result in zip(tasks, task_results):
-        if isinstance(result, Exception):
-            print(f"  Step {step}: Failed - {result}")
-        elif result:
-            update_glb_filename(pdf_hash, step, result)
-            print(f"  Step {step}: {result}")
-            generated_count += 1
+        if glb_path.exists():
+            # Model already exists, just update database
+            update_glb_filename(pdf_hash, step, expected_glb_filename)
+            print(f"  Step {step}: Using existing model {expected_glb_filename}")
+            skipped_count += 1
         else:
-            print(f"  Step {step}: No GLB generated")
+            # Model doesn't exist, create generation task
+            image_path = volume_dir / image_filename
+            task = image_to_model(str(image_path), hash_hex, step)
+            tasks.append((step, task))
 
-    print(f"3D model generation complete! Generated {generated_count}/{len(image_rows)} files")
-    return generated_count
+    # Execute all generation tasks in parallel
+    if tasks:
+        print(f"  Generating {len(tasks)} new models (skipped {skipped_count} existing)...")
+        task_results = await asyncio.gather(*[task for _, task in tasks], return_exceptions=True)
+
+        # Update database with GLB filenames
+        generated_count = 0
+        for (step, _), result in zip(tasks, task_results):
+            if isinstance(result, Exception):
+                print(f"  Step {step}: Failed - {result}")
+            elif result:
+                update_glb_filename(pdf_hash, step, result)
+                print(f"  Step {step}: {result}")
+                generated_count += 1
+            else:
+                print(f"  Step {step}: No GLB generated")
+    else:
+        generated_count = 0
+        print(f"  All {skipped_count} models already exist, no generation needed")
+
+    total_count = generated_count + skipped_count
+    print(f"3D model generation complete! Generated {generated_count} new, reused {skipped_count} existing ({total_count} total)")
+    return total_count
 
 
 async def process_pdf_pipeline(
@@ -516,14 +556,14 @@ async def get_instruction(hash: str, step: int):
 @app.get("/step-position/{hash}/{step}")
 async def get_step_position_endpoint(hash: str, step: int):
     """
-    Get the page number and Y-coordinate for a specific step.
+    Get the page number and Y-percentage for a specific step.
 
     Args:
         hash: First 16 characters of the PDF hash
         step: Step number
 
     Returns:
-        JSON with page_number, y_coordinate, and bbox information
+        JSON with page_number and y_percentage (0-100% from top of page)
     """
     try:
         position = get_step_position(hash, step)
@@ -536,8 +576,7 @@ async def get_step_position_endpoint(hash: str, step: int):
         return {
             "success": True,
             "page_number": position['page_number'],
-            "y_coordinate": position['y_coordinate'],
-            "bbox": position['bbox']
+            "y_percentage": position['y_percentage']
         }
     except HTTPException:
         raise

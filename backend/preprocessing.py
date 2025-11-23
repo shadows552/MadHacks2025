@@ -22,7 +22,7 @@ def extract_pdf_content(pdf_path: str, output_dir: str = "volume") -> Tuple[List
 
     Returns:
         Tuple of (list of image paths in order, path to instructions text file, list of position data)
-        Position data includes: page_number, y_coordinate, bbox
+        Position data includes: page_number and y_percentage (0-100% from top of page)
     """
     # Construct the PDF path within the volume directory
     pdf_path = Path("./volume") / pdf_path
@@ -78,7 +78,7 @@ def extract_pdf_content(pdf_path: str, output_dir: str = "volume") -> Tuple[List
                 print(f"  Skipping small image from page {page_num + 1} ({image_size_kb:.2f} KB)")
                 continue
 
-            # Get bounding box of the image on the page
+            # Get position of the image on the page
             try:
                 image_rects = page.get_image_rects(xref)
                 if image_rects:
@@ -90,18 +90,14 @@ def extract_pdf_content(pdf_path: str, output_dir: str = "volume") -> Tuple[List
                     page_height = page.rect.height
                     y_from_top = page_height - rect.y1
 
-                    # Store position data
+                    # Calculate percentage from top of page (0-100%)
+                    # This is resolution-independent and works with any rendered size
+                    y_percentage = (y_from_top / page_height) * 100
+
+                    # Store position data as percentage only
                     position_data = {
                         'page_number': page_num,  # 0-indexed
-                        'y_coordinate': y_from_top,
-                        'bbox': {
-                            'x0': rect.x0,
-                            'y0': rect.y0,
-                            'x1': rect.x1,
-                            'y1': rect.y1,
-                            'width': rect.width,
-                            'height': rect.height
-                        }
+                        'y_percentage': y_percentage  # Percentage from top
                     }
                 else:
                     # No position data available
@@ -132,7 +128,7 @@ def extract_pdf_content(pdf_path: str, output_dir: str = "volume") -> Tuple[List
                 image_counter += 1
 
                 if position_data:
-                    print(f"  Extracted image {image_counter} from page {page_num + 1}: {image_path.name} ({image_size_kb:.1f} KB) at Y={position_data['y_coordinate']:.1f}")
+                    print(f"  Extracted image {image_counter} from page {page_num + 1}: {image_path.name} ({image_size_kb:.1f} KB) at {position_data['y_percentage']:.1f}% from top")
                 else:
                     print(f"  Extracted image {image_counter} from page {page_num + 1}: {image_path.name} ({image_size_kb:.1f} KB)")
 
