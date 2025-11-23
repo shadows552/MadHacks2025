@@ -1,0 +1,26 @@
+{
+  "projectName": "3Docs - Interactive 3D Repair Guide",
+  "description": "AI-powered application that transforms PDF repair manuals into interactive 3D repair guides",
+  "contextFiles": [
+    "README.md",
+    "claude.md",
+    ".claude/context.md"
+  ],
+  "codeStyle": {
+    "backend": {
+      "language": "Python",
+      "framework": "FastAPI",
+      "formatter": "black",
+      "linter": "pylint"
+    },
+    "frontend": {
+      "language": "TypeScript",
+      "framework": "Next.js 16",
+      "styling": "Tailwind CSS"
+    }
+  },
+  "testingFramework": {
+    "backend": "pytest",
+    "frontend": "jest"
+  }
+}

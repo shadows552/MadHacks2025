@@ -6,7 +6,6 @@ import {
   ArrowRight,
   ChevronRight,
   Box,
-  Maximize2,
   PlayCircle,
   FileText,
   Volume2,
