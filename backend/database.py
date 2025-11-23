@@ -123,3 +123,34 @@ def store_gemini_results(
     print(f"  Steps: {step_number} (0 to {step_number - 1})")
 
     return pdf_hash_bytes
+
+def get_instructions_by_hash(pdf_hash_bytes: bytes) -> list:
+    """
+    Get all instructions for a given PDF hash.
+
+    Args:
+        pdf_hash_bytes: PDF hash
+
+    Returns:
+        List of tuples (step, instruction_filename)
+    """
+    cursor = con.execute(
+        'SELECT step, instruction_filename FROM instructions WHERE hash = ? ORDER BY step',
+        (pdf_hash_bytes,)
+    )
+    return cursor.fetchall()
+
+def update_mp3_filename(pdf_hash_bytes: bytes, step: int, mp3_filename: str):
+    """
+    Update the MP3 filename for a specific instruction in the database.
+
+    Args:
+        pdf_hash_bytes: PDF hash
+        step: Step number
+        mp3_filename: MP3 filename (without volume/)
+    """
+    con.execute(
+        'UPDATE instructions SET mp3_filename = ? WHERE hash = ? AND step = ?',
+        (mp3_filename, pdf_hash_bytes, step)
+    )
+    con.commit()

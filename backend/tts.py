@@ -1,17 +1,18 @@
 import requests
-from secret import API_KEY
+import os
 
 API_URL = "https://api.fish.audio/v1/tts"
 
 def tts(text, voice_id="zh_CN-female-1", output_file="output.wav"):
+    API_KEY = os.getenv("FISH_AUDIO_API_KEY")
     if not API_KEY:
-        raise ValueError("API key is missing in secret.py")
+        raise ValueError("FISH_AUDIO_API_KEY environment variable is not set")
 
     payload = {
         "text": text,
         "model": "fish-speech-1",
         "voice": voice_id,
-        "format": "wav"
+        "format": "mp3"
     }
 
     headers = {
