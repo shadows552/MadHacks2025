@@ -73,6 +73,8 @@ const fetchManualData = async (hash: string): Promise<ManualData> => {
       fetchStepPosition(hash, stepNum)
     ]);
 
+    console.log(`Step ${stepNum} position data:`, position);
+
     return {
       stepNumber: stepNum,
       title: instructionData.title,
@@ -85,6 +87,12 @@ const fetchManualData = async (hash: string): Promise<ManualData> => {
   });
 
   const steps = await Promise.all(stepDataPromises);
+
+  console.log('All steps with position data:', steps.map(s => ({
+    step: s.stepNumber,
+    hasPosition: !!s.position,
+    position: s.position
+  })));
 
   return {
     productName: pdfInfo.pdf_filename.replace('.pdf', ''),
@@ -189,30 +197,66 @@ export default function Workspace({ params }: WorkspaceProps) {
   useEffect(() => {
     if (!activeStepData?.position || !pdfContainerRef.current) return;
 
-    const { page_number, y_coordinate } = activeStepData.position;
+    const { page_number, y_percentage } = activeStepData.position;
 
     // Get the page element
     const pageElement = pageRefs.current[page_number];
-    if (!pageElement) return;
+    if (!pageElement) {
+      console.log('Page element not found:', { page_number, totalPages: pageRefs.current.length });
+      return;
+    }
 
-    // Calculate scroll position
+    // Wait for page to be fully rendered before scrolling
+    // If offsetHeight is 0, the page hasn't rendered yet
+    if (pageElement.offsetHeight === 0) {
+      console.log('Page not yet rendered, waiting...');
+      // Retry after a short delay
+      const timer = setTimeout(() => {
+        if (pageElement.offsetHeight > 0) {
+          performScroll();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+
+    const performScroll = () => {
+      if (!pdfContainerRef.current) return;
+
+      // Get rendered page dimensions
     const pageTop = pageElement.offsetTop;
+      const renderedPageHeight = pageElement.offsetHeight;
 
-    // Calculate scale factor (rendered PDF size vs original)
-    // Standard PDF page width is 612 points
-    const scaleFactor = pdfWidth / 612; // Approximate scale
+      // Convert percentage to actual coordinate based on rendered page height
+      // y_percentage is stored as a percentage (0-100%) in the database
+      const actualY = (y_percentage / 100) * renderedPageHeight;
 
-    // Apply scale to Y coordinate
-    const scaledY = y_coordinate * scaleFactor;
+      // Calculate target scroll position
+      // Use 80% of container height as offset instead of fixed 100px
+      const containerHeight = pdfContainerRef.current.offsetHeight;
+      const offset = containerHeight * 0.8;
+      const targetScrollTop = Math.max(0, pageTop + actualY - offset);
 
-    // Calculate target scroll position (with 100px offset to center better)
-    const targetScrollTop = pageTop + scaledY - 100;
+      console.log('PDF Auto-scroll Debug:', {
+        step: currentStep,
+        page_number,
+        y_percentage,
+        pageTop,
+        renderedPageHeight,
+        actualY,
+        containerHeight,
+        offset,
+        targetScrollTop,
+        currentScrollTop: pdfContainerRef.current.scrollTop
+      });
 
     // Smooth scroll to position
     pdfContainerRef.current.scrollTo({
       top: targetScrollTop,
       behavior: 'smooth'
     });
+    };
+
+    performScroll();
   }, [currentStep, activeStepData, pdfWidth]);
 
   // --- RESIZE HANDLERS ---
