@@ -9,6 +9,7 @@ backend/.env
 backend/secret.py
 /.tmp/
 output/*
-backend/volume/*
+backend/volume/*.jpeg
+backend/volume/*.db
 .idea/
 frontend/package-lock.json
