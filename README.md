@@ -6,9 +6,7 @@ Transparency Notice:
 This repository was created for the MadHacks 2025 Hackathon and is not a polished project. Much of the less complex programming was done with AI assistance.
 
 ## Demo
-To view the 3Docs demo without inputting API keys and waiting, navigate to the root of the repository and run:
-- `docker compose build`
-- `docker compose up`
+To view the 3Docs demo without inputting API keys and waiting, navigate to the root of the repository and run 'docker-compose up --build'
 
 Navigate to http://localhost:3000/ using a web browser. Using the file upload box, input demo.pdf from the volume directory. This will use the cached API outputs instead of regenerating everything from scratch.
 
@@ -40,7 +38,7 @@ docker-compose up --build
 - Frontend: http://localhost:3000
 - Backend: http://localhost:8000
 
-## Local
+## Local (No Docker)
 
 ### Backend
 ```bash
@@ -55,4 +53,3 @@ cd frontend
 npm install
 npm run dev
 ```
-
