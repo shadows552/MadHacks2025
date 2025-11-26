@@ -38,6 +38,12 @@ docker-compose up --build
 - Frontend: http://localhost:3000
 - Backend: http://localhost:8000
 
+**3Docs Dashboard**
+![3Docs Dashboard](3DocsDash.png)
+
+**3Docs Viewer**
+![3Docs Viewer](3DocsViewer.png)
+
 ## Local (No Docker)
 
 ### Backend
